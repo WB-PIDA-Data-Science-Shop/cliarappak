@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -v \"^\\\\./auxiliary/dynamic_benchmarking.R$\\\\|^\\\\./auxiliary/new_dynamic\\\\|^\\\\./auxiliary/testScript\")",
+      "Bash(Rscript -e 'devtools::document\\(\\)')",
+      "Bash(Rscript -e 'devtools::load_all\\(\\)')",
+      "Read(//c/Users/ifean/Documents/WorldBankWork/GitProjects/cliarapp/**)"
+    ]
+  }
+}

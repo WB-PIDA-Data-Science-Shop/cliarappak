@@ -1,0 +1,71 @@
+Package: cliarappak
+Type: Package
+Title: CLIAR Benchmarking Dashboard
+Version: 0.1.0
+Authors@R: c(
+    person("Ifeanyi", "Edochie", email = "iedochie@worldbank.org", role = c("aut", "cre")),
+    person("Ileana", "Marroquin", email = "imarroquinmartin@worldbank.org", role = "aut"),
+    person("Galileu", "Kim", email = "galileukim@worldbank.org", role = "aut"))
+Description: Shiny dashboard for the Country-Level Institutional Assessment and
+    Review (CLIAR), packaged as an installable golem application. Benchmarks
+    institutional indicators across countries using closeness-to-frontier (CTF)
+    scores computed by the cliaretl package.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 4.5)
+Imports:
+    shiny,
+    golem,
+    bs4Dash,
+    fresh,
+    plotly,
+    DT,
+    shinyjs,
+    shinyBS,
+    shinycssloaders,
+    shinybusy,
+    shinyWidgets,
+    shinyhelper,
+    shinyFeedback,
+    cicerone,
+    colourpicker,
+    bsplus,
+    sf,
+    haven,
+    zoo,
+    formattable,
+    data.table,
+    hrbrthemes,
+    htmltools,
+    officer,
+    rvg,
+    openxlsx,
+    countrycode,
+    readxl,
+    rappdirs,
+    fs,
+    dplyr,
+    tidyr,
+    ggplot2,
+    stringr,
+    purrr,
+    tibble,
+    readr,
+    rmarkdown,
+    knitr,
+    waiter,
+    forcats,
+    cliaretl
+Suggests:
+    testthat (>= 3.0.0),
+    flextable,
+    Hmisc,
+    janitor,
+    RColorBrewer,
+    config
+Remotes:
+    WB-PIDA-Data-Science-Shop/cliaretl
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+Config/roxygen2/version: 8.1.0

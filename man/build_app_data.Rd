@@ -4,7 +4,11 @@
 \alias{build_app_data}
 \title{Build the CLIAR app's shared data objects}
 \usage{
-build_app_data()
+build_app_data(dynamic_year_cutoff = NULL)
+}
+\arguments{
+\item{dynamic_year_cutoff}{Integer year, or \code{NULL} (default) to derive one
+via \code{\link[=resolve_dynamic_year_cutoff]{resolve_dynamic_year_cutoff()}}.}
 }
 \value{
 A named list of data objects shared across \code{cliarappak}'s modules.
@@ -46,4 +50,13 @@ cycle. It's not shipped here at all; see \code{\link[=prepare_app_data_coverage]
 which computes the same thing live and is called lazily from
 \code{mod_reports.R}'s Coverage Report download handler (not from here) since
 it's only needed for that one report, not every session.
+
+\code{global_data_dyn} (the dynamic-benchmarking / Time Trends dataset) used to
+hardcode \code{filter(year <= 2024)} -- a number that silently hid any new year
+\code{cliaretl} added until someone edited this file by hand. \code{dynamic_year_cutoff}
+replaces that: \code{NULL} (the default) derives it from \code{cliaretl::db_variables}'s
+own \code{ref_year} attribute via \code{\link[=resolve_dynamic_year_cutoff]{resolve_dynamic_year_cutoff()}}, so it tracks
+each \code{cliaretl} data-release cycle automatically. Pass an explicit year to
+preview a different vintage -- this is also how \code{run_app()}'s own
+\code{dynamic_year_cutoff} argument reaches this function.
 }

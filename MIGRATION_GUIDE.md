@@ -928,6 +928,65 @@ logic that changed, not just moved.
 
 ---
 
+## Post-migration — the `year <= 2024` cutoff resolved (2026-08-20)
+
+The last flagged manual step (Part 1/Part 3 of the Field Guide artifact) is fixed. `fct_app_data.R`
+gains a new exported function, **`resolve_dynamic_year_cutoff(dynamic_year_cutoff = NULL)`**: `NULL`
+derives a year from `cliaretl::db_variables`'s `ref_year` attribute (`ref_year - 1`, matching the
+same self-updating pattern already used for `prepare_app_data_coverage()`'s window); an explicit
+year overrides it. `build_app_data()` gained a `dynamic_year_cutoff = NULL` parameter that calls
+this resolver and uses the result in place of the old hardcoded `filter(year <= 2024)` on
+`global_data_dyn` -- and now returns the resolved value as `app_data$dynamic_year_cutoff` too, so
+any module (or a future admin/about page) can display which vintage is live. `run_app()` gained the
+same named `dynamic_year_cutoff = NULL` argument, threaded straight through to `build_app_data()`.
+
+This was a deliberate design choice, not the first one proposed: an environment variable or a
+required deploy-time argument would each still leave a human in the loop remembering to set the
+right value every cycle -- just relocated to infra config instead of source code, and less visible
+there than a line in a diff. The chosen shape auto-updates with zero action in the common case,
+while still exposing an explicit override for deliberate use -- the team noted they *frequently*
+want to preview different cutoffs, which a purely-automatic derivation with no override would have
+made harder, not easier.
+
+**Why `run_app()` specifically, not buried in `...`**: `deploy_app()` (below) needed to bake a
+specific, resolved cutoff into whatever entry file actually ships -- Connect restarts/scales the
+deployed process on its own schedule, so an argument passed once at deploy time doesn't survive
+unless the deployed code itself contains it. `resolve_dynamic_year_cutoff()` is exported and kept
+separate from `build_app_data()` specifically so `deploy_app()` can call it directly (to know what
+value it's about to write into a generated entry file) without needing to run the full data-loading
+pipeline just to resolve one integer.
+
+## `deploy_app()` built (2026-08-20)
+
+`R/deploy_app.R`, following the same shape as an existing `deploy_govhrapp()` in a sibling
+World Bank package (the user's own org convention, not invented here) -- `type = c("dev", "prod")`
+resolving a Posit Connect app GUID from an environment variable (`cliarappak_dev_guid` /
+`cliarappak_prod_guid`), `appDir = "."`, `forceUpdate = TRUE`, deploying via
+`rsconnect::deployApp()`. Two departures from that template, both deliberate:
+
+- **No `suite` argument** -- `cliarappak` is one app, not several, so `deploy_govhrapp()`'s
+  suite/GUID matrix collapses to a single `type` dimension.
+- **The entry file is generated, not static.** `deploy_govhrapp()` points `appPrimaryDoc` at a
+  pre-existing, hand-written file. `cliarappak`'s `inst/app/cliarappak_app.R` doesn't exist as
+  source -- `write_deploy_entrypoint()` (internal, `@noRd`, in the same file) regenerates it on
+  every `deploy_app()` call, deparsing every `run_app()`-shaped argument (`onStart`, `options`,
+  `enableBookmarking`, `uiPattern`, the resolved `dynamic_year_cutoff`, and any `...` extras) into
+  a literal `cliarappak::run_app(...)` call. This is the mechanism that makes a chosen cutoff
+  survive Connect's own restart/scale schedule, not just the one deploy that set it. The file is
+  `.gitignore`d and `.Rbuildignore`d as a build artifact, the same way `rsconnect/`'s own
+  bookkeeping folder is.
+
+**Verified without a live Connect connection** (none available here): `write_deploy_entrypoint()`
+produces a file that actually parses as valid R with the correct argument values; `deploy_app()`
+errors clearly when the relevant GUID environment variable isn't set; and, with
+`rsconnect::deployApp()` mocked via `testthat::with_mocked_bindings()`, `deploy_app(type = "dev",
+dynamic_year_cutoff = 2021)` resolves the right GUID, generates a correct entry file with `2021L`
+baked in, and calls `deployApp()` with exactly the expected `appDir`/`appId`/`appPrimaryDoc`/
+`server`/`forceUpdate` arguments. The actual network call to Posit Connect itself is the one thing
+that couldn't be exercised here.
+
+---
+
 ## Phase 7 — Docs
 
 - `DESCRIPTION` Title/Description already set correctly in Phase 1 — no placeholder text remains.

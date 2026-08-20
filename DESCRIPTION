@@ -63,7 +63,8 @@ Suggests:
     Hmisc,
     janitor,
     RColorBrewer,
-    config
+    config,
+    rsconnect
 Remotes:
     WB-PIDA-Data-Science-Shop/cliaretl
 Config/testthat/edition: 3

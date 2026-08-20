@@ -35,9 +35,23 @@
 #' `mod_reports.R`'s Coverage Report download handler (not from here) since
 #' it's only needed for that one report, not every session.
 #'
+#' `global_data_dyn` (the dynamic-benchmarking / Time Trends dataset) used to
+#' hardcode `filter(year <= 2024)` -- a number that silently hid any new year
+#' `cliaretl` added until someone edited this file by hand. `dynamic_year_cutoff`
+#' replaces that: `NULL` (the default) derives it from `cliaretl::db_variables`'s
+#' own `ref_year` attribute via [resolve_dynamic_year_cutoff()], so it tracks
+#' each `cliaretl` data-release cycle automatically. Pass an explicit year to
+#' preview a different vintage -- this is also how `run_app()`'s own
+#' `dynamic_year_cutoff` argument reaches this function.
+#'
+#' @param dynamic_year_cutoff Integer year, or `NULL` (default) to derive one
+#'   via [resolve_dynamic_year_cutoff()].
+#'
 #' @return A named list of data objects shared across `cliarappak`'s modules.
 #' @export
-build_app_data <- function() {
+build_app_data <- function(dynamic_year_cutoff = NULL) {
+  dynamic_year_cutoff <- resolve_dynamic_year_cutoff(dynamic_year_cutoff)
+
   db_variables_base <- cliaretl::db_variables_final
 
   vars_all <- db_variables_base %>%
@@ -92,7 +106,7 @@ build_app_data <- function() {
 
   global_data_dyn <-
     cliaretl::closeness_to_frontier_dynamic %>%
-    dplyr::filter(year <= 2024) %>%
+    dplyr::filter(year <= dynamic_year_cutoff) %>%
     dplyr::ungroup()
 
   ctf_long_dyn <-
@@ -247,8 +261,38 @@ build_app_data <- function() {
     group_list = group_list,
     all_groups = all_groups,
     y_scatter_choices = y_scatter_choices,
-    plot_height = 500
+    plot_height = 500,
+    dynamic_year_cutoff = dynamic_year_cutoff
   )
+}
+
+#' Resolve the dynamic-benchmarking year cutoff
+#'
+#' The single place that turns "no explicit cutoff given" into an actual
+#' year, so [build_app_data()], [run_app()], and any future deploy helper
+#' that needs to bake a specific cutoff into a deployment all agree on the
+#' same default without duplicating the logic.
+#'
+#' @param dynamic_year_cutoff Integer year, or `NULL` to derive one from
+#'   `cliaretl::db_variables`'s `ref_year` attribute (`ref_year - 1`) --
+#'   e.g. `ref_year = 2025` resolves to `2024`.
+#'
+#' @return A single integer year.
+#' @export
+resolve_dynamic_year_cutoff <- function(dynamic_year_cutoff = NULL) {
+  if (!is.null(dynamic_year_cutoff)) {
+    return(as.integer(dynamic_year_cutoff))
+  }
+
+  ref_year <- attr(cliaretl::db_variables, "ref_year")
+  if (is.null(ref_year)) {
+    stop(
+      "Could not derive dynamic_year_cutoff: cliaretl::db_variables has no ",
+      "'ref_year' attribute. Pass dynamic_year_cutoff explicitly."
+    )
+  }
+
+  as.integer(ref_year) - 1L
 }
 
 #' Build the coverage-analysis long dataset for the Coverage Report
@@ -299,3 +343,4 @@ prepare_app_data_coverage <- function(raw_data, db_variables, year_window = NULL
       by = c("indicators" = "variable")
     )
 }
+

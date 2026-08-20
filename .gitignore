@@ -4,3 +4,8 @@
 .httr-oauth
 .DS_Store
 .quarto
+
+# rsconnect's own deployment manifests, and the entry file deploy_app()
+# regenerates on every call -- both are build artifacts, not source.
+rsconnect/
+inst/app/cliarappak_app.R

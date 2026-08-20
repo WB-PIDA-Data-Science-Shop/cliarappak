@@ -9,13 +9,22 @@ run_app(
   options = list(),
   enableBookmarking = NULL,
   uiPattern = "/",
+  dynamic_year_cutoff = NULL,
   ...
 )
 }
 \arguments{
 \item{onStart, options, enableBookmarking, uiPattern}{See \code{?shiny::shinyApp}.}
 
-\item{...}{arguments to pass to golem_opts.}
+\item{dynamic_year_cutoff}{Integer year, or \code{NULL} (default) to derive one
+from \code{cliaretl}'s current data vintage -- see \code{\link[=resolve_dynamic_year_cutoff]{resolve_dynamic_year_cutoff()}}.
+Controls how far into the dynamic-benchmarking / Time Trends data
+\code{build_app_data()} reaches; pass an explicit year to preview a different
+cutoff without waiting on a new \code{cliaretl} release. A future \code{deploy_app()}
+will accept this same argument to bake a chosen cutoff into a deployment,
+which is why it's resolved once, explicitly, rather than left implicit.}
+
+\item{...}{further arguments to pass to golem_opts.}
 }
 \description{
 Run the CLIAR Shiny Application
@@ -36,9 +45,8 @@ module server, even though it was never passed as a formal argument. It's
 essentially a side-channel for configuration that bypasses the
 fixed-signature constraint.
 
-Any arguments passed to \code{run_app(...)} beyond \code{onStart}, \code{options},
-\code{enableBookmarking}, and \code{uiPattern} are collected into \code{...} and threaded
-into \code{golem_opts} this way.
+Any arguments passed to \code{run_app(...)} beyond the named ones below are
+collected into \code{...} and threaded into \code{golem_opts} this way.
 
 \code{golem_opts$app_data} in particular is how \code{app_ui()}/\code{app_server()} reach
 the shared data objects built by \code{\link[=build_app_data]{build_app_data()}} -- it's built here
@@ -46,5 +54,5 @@ once per app start (not per session, and not per implicit global the way
 the original \code{cliarapp} script did it) and passed through
 \code{\link[golem:get_golem_options]{golem::get_golem_options()}} to every module. Pass \code{app_data} explicitly
 yourself only if you need to override it (e.g. tests injecting fixtures);
-otherwise it's built automatically.
+otherwise it's built automatically, using \code{dynamic_year_cutoff} below.
 }

@@ -1,3 +1,5 @@
+^renv$
+^renv\.lock$
 ^cliarappak\.Rproj$
 ^\.Rproj\.user$
 ^dev$

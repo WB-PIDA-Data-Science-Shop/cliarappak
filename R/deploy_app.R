@@ -34,7 +34,7 @@ write_deploy_entrypoint <- function(path, ...) {
     "# Regenerated fresh on every deploy_app() call; not tracked in git.",
     "library(cliarappak)",
     "",
-    "cliarappak::run_app(",
+    "run_app(",
     paste(arg_lines, collapse = ",\n"),
     ")"
   )

@@ -987,6 +987,41 @@ that couldn't be exercised here.
 
 ---
 
+## `renv` adopted, entry file simplified, and a version-upgrade regression check (2026-08-21)
+
+The project now has `renv` set up (`renv.lock` + `renv/`) for reproducible dependency management —
+`renv::restore()` installed all 179 locked packages cleanly, including `cliaretl` itself (built from
+source successfully despite an initial "GitHub authentication credentials are not available"
+warning during dependency resolution). `.Rbuildignore` gained
+`^renv\.lock$` entries so `R CMD build` doesn't try to bundle them. Two things `renv::status()`
+flags are expected, not bugs: `cliarappak` itself shows as "used but not installed" (we develop it
+via `devtools::load_all()`, never `R CMD INSTALL` it into the renv library), and the lockfile was
+generated against R 4.6.0 while this machine runs 4.5.2 (worth reconciling eventually, but
+`restore()` succeeded despite it).
+
+**`deploy_app()`'s generated entry file simplified**: `write_deploy_entrypoint()` now writes bare
+`run_app(...)` instead of `cliarappak::run_app(...)`, since `library(cliarappak)` is already the
+line above it in the generated file. The fully-qualified form was kept initially for robustness
+against a same-named function from another attached package ever shadowing it, and for a reader
+not having to trace back to the `library()` line to know whose `run_app` is running -- both still
+true in principle, but the team preferred the shorter, more standard-looking form for a file this
+size, and the masking risk is negligible for a single-purpose deployment entry file.
+
+**Restoring `renv` pulled in materially newer versions of several core dependencies** (`ggplot2`
+3.x -> 4.0.3, `shiny` -> 1.14.0, `dplyr` -> 1.2.1, among others) -- worth a real regression check,
+not an assumption that semver held. Re-ran the full multi-tab `shiny::testServer()` suite (every
+tab's primary output, plus `build_app_data()` and `deploy_app()`'s entry-file generation) against
+the restored environment. Everything still passes, **including the already-known
+`fct_reorder()`/sparse-indicator issue in `static_bar()`** (still present, unchanged, confirming
+it's the same pre-existing issue and not a new regression from the version bump) --
+**one new, non-fatal finding**: rendering the benchmark plot now emits `Using \`size\` aesthetic
+for lines was deprecated in ggplot2 3.4.0. Please use \`linewidth\` instead.` `fct_plots.R` uses the
+now-deprecated `size` aesthetic for line geoms somewhere -- still functional today (a warning, not
+a removed feature, in 4.0.3), but worth fixing before some future `ggplot2` release actually drops
+it. Not yet located or fixed; flagging for whoever's next in `fct_plots.R`.
+
+---
+
 ## Phase 7 — Docs
 
 - `DESCRIPTION` Title/Description already set correctly in Phase 1 — no placeholder text remains.

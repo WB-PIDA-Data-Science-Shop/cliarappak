@@ -1009,6 +1009,13 @@ static_plot_dyn <-
 
 plot_notes_function <-
   function(y, z, tab_name, miss_var, plot_type, custom_df) {
+    # Some indicator codes returned by missing_var()/low_variance() have no
+    # matching row in variable_names (the code -> display-name dictionary),
+    # so the left_join that resolves them to a human-readable name yields NA
+    # -- without this, paste() below renders that NA as the literal string
+    # "NA" in the notes text instead of just omitting the indicator.
+    miss_var <- miss_var[!is.na(miss_var)]
+
     if (!is.null(custom_df)) {
       custom_grp_notes <- custom_df %>%
         group_by(Grp) %>%

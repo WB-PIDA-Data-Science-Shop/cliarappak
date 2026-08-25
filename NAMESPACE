@@ -32,24 +32,32 @@ export(run_app)
 export(toast_messages_func)
 export(useBs4Dash)
 export(x_scatter_choices)
-import(bs4Dash)
 import(dplyr)
 import(fs)
 import(ggplot2)
 import(golem)
-import(plotly)
 import(purrr)
 import(readr)
 import(sf)
-import(shiny)
-import(shinyWidgets)
-import(shinyjs)
 import(stringr)
 import(tidyr)
 importFrom(DT,
   dataTableOutput,
   datatable,
   renderDataTable
+)
+importFrom(bs4Dash,
+  box,
+  bs4Card,
+  dashboardBody,
+  dashboardBrand,
+  dashboardHeader,
+  dashboardPage,
+  dashboardSidebar,
+  menuItem,
+  sidebarMenu,
+  tabItem,
+  tabItems
 )
 importFrom(colourpicker,colourInput)
 importFrom(data.table,setnames)
@@ -76,9 +84,69 @@ importFrom(openxlsx,
   saveWorkbook,
   writeData
 )
+importFrom(plotly,
+  config,
+  ggplotly,
+  layout,
+  plotlyOutput,
+  renderPlotly,
+  style
+)
 importFrom(rappdirs,user_data_dir)
 importFrom(rsconnect,deployApp)
 importFrom(rvg,dml)
+importFrom(shiny,
+  HTML,
+  NS,
+  a,
+  bindCache,
+  bindEvent,
+  br,
+  code,
+  column,
+  conditionalPanel,
+  div,
+  downloadButton,
+  downloadHandler,
+  enableBookmarking,
+  eventReactive,
+  fluidRow,
+  h3,
+  htmlOutput,
+  icon,
+  img,
+  includeCSS,
+  isolate,
+  modalDialog,
+  moduleServer,
+  need,
+  numericInput,
+  observe,
+  observeEvent,
+  p,
+  reactive,
+  removeModal,
+  renderTable,
+  renderUI,
+  req,
+  shinyApp,
+  showNotification,
+  span,
+  strong,
+  tableOutput,
+  tagList,
+  tags,
+  uiOutput,
+  validate
+)
+importFrom(shinyWidgets,
+  checkboxGroupButtons,
+  pickerInput,
+  prettyCheckbox,
+  radioGroupButtons,
+  updateCheckboxGroupButtons,
+  updatePickerInput
+)
 importFrom(shinybusy,
   remove_modal_spinner,
   show_modal_spinner
@@ -87,6 +155,10 @@ importFrom(shinycssloaders,withSpinner)
 importFrom(shinyhelper,
   helper,
   observe_helpers
+)
+importFrom(shinyjs,
+  toggleState,
+  useShinyjs
 )
 importFrom(waiter,
   spin_ring,

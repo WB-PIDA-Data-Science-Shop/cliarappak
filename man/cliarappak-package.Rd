@@ -14,6 +14,22 @@ every bare \code{pickerInput()}, \code{fluidRow()}, \code{reactive()}, \code{tag
 across the ported \code{mod_*.R}/\code{fct_*.R} files fails the moment it actually
 executes -- which \code{devtools::load_all()} alone won't catch, since it only
 parses and defines functions, never calls them.
+
+\code{shiny}, \code{bs4Dash}, \code{shinyWidgets}, \code{shinyjs}, and \code{plotly} all export
+overlapping function names (e.g. \code{column}, \code{actionButton}, \code{last_plot}),
+which under a blanket \verb{@import} produces "replacing previous import"
+warnings at load time and leaves the winner decided by NAMESPACE's
+alphabetical directive order rather than by any actual intent. These five
+are therefore \verb{@importFrom}'d per function actually used (audited against
+the full \verb{R/} source, 2026-08-25) instead of \verb{@import}'d whole -- this also
+means only the currently-used name wins any name clash, matching what was
+already verified working in Phase 4/6, and any future addition of a new
+\emph{unqualified} call to one of these packages fails loudly and immediately
+(\verb{could not find function}) instead of silently resolving to whichever
+package happens to sort last. Packages below that don't collide with
+anything today (\code{golem}, \code{dplyr}, \code{ggplot2}, \code{tidyr}, \code{stringr}, \code{purrr},
+\code{readr}, \code{sf}) are left as \verb{@import} -- converting those too would be pure
+churn with no collision to fix.
 }
 \author{
 \strong{Maintainer}: Ifeanyi Edochie \email{iedochie@worldbank.org}

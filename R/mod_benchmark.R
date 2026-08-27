@@ -652,8 +652,6 @@ mod_benchmark_server <- function(id, app_data) {
     shinyjs::disable("preset_order")
     shinyjs::hide("benchmark_median")
 
-    observe_helpers()
-
     observeEvent(input$start_guide_bench, {
       guide_benchmark$init()$start()
     })
@@ -1066,8 +1064,7 @@ mod_benchmark_server <- function(id, app_data) {
             "Apply selection",
             icon = icon("check"),
             status = "success",
-            width = "100%",
-            shinyjs::enable("save_inputs")
+            width = "100%"
           )
         } else {
           bs4Dash::actionButton(
@@ -1095,6 +1092,7 @@ mod_benchmark_server <- function(id, app_data) {
         toggleState(id = "select", condition = length(input$countries) >= 10, shinyjs::disable("pptreport"))
         toggleState(id = "select", condition = length(input$countries) >= 10, shinyjs::disable("download_missing"))
         toggleState(id = "select", condition = length(input$countries) >= 10, shinyjs::disable("download_data_1"))
+        toggleState(id = "select", condition = length(input$countries) >= 10, shinyjs::disable("save_inputs"))
       },
       ignoreNULL = FALSE
     )
@@ -1597,6 +1595,7 @@ mod_benchmark_server <- function(id, app_data) {
     shiny::observeEvent(input$select, {
       shinyjs::show("download_data_1")
       shinyjs::enable("download_data_1")
+      shinyjs::enable("save_inputs")
     })
 
     output$save_inputs <- downloadHandler(

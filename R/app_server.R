@@ -1,6 +1,14 @@
 app_server <- function(input, output, session) {
   app_data <- golem::get_golem_options("app_data")
 
+  # shinyhelper's click-handling JS always signals the app's ROOT session
+  # (Shiny.onInputChange("shinyhelper-modal_params", ...) is not namespaced),
+  # so observe_helpers() must be called here, not inside any moduleServer --
+  # called from within a module it listens on that module's child session,
+  # which never receives the unnamespaced event, and every "?" icon in the
+  # app silently does nothing.
+  observe_helpers()
+
   bench <- mod_benchmark_server("benchmark", app_data)
   country_comparison <- mod_country_comparison_server("country", bench, app_data)
 

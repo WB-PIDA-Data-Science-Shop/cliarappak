@@ -24,12 +24,10 @@ export(mod_trends_server)
 export(mod_trends_ui)
 export(mod_world_map_server)
 export(mod_world_map_ui)
-export(modal_function)
 export(prepare_app_data_coverage)
 export(pub_function)
 export(resolve_dynamic_year_cutoff)
 export(run_app)
-export(toast_messages_func)
 export(useBs4Dash)
 export(x_scatter_choices)
 import(dplyr)
@@ -159,6 +157,12 @@ importFrom(shinyhelper,
 importFrom(shinyjs,
   toggleState,
   useShinyjs
+)
+importFrom(stats,
+  median,
+  na.omit,
+  quantile,
+  setNames
 )
 importFrom(waiter,
   spin_ring,

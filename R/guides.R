@@ -64,7 +64,7 @@ guide_benchmark <- cicerone::Cicerone$
   step( 
     "input_buttons",
     title = "Saving and loading Selection of Countries",
-    description = "You can save your selected inputs to return to at a future time: click “Save Selection of Countries” button to download a .rds file to your computer with that information. When you return to the dashboard, you can click “Load Selection of Countries” button and then “Browse” to select this same .rds file. Loading this .rds file will re-populate all of the selections that you previously made.",
+    description = "You can save your selected inputs to return to at a future time: click \u201cSave Selection of Countries\u201d button to download a .rds file to your computer with that information. When you return to the dashboard, you can click \u201cLoad Selection of Countries\u201d button and then \u201cBrowse\u201d to select this same .rds file. Loading this .rds file will re-populate all of the selections that you previously made.",
     is_id = T
   )$
   step(
@@ -82,19 +82,19 @@ guide_benchmark <- cicerone::Cicerone$
   step( 
     "download_reports",
     title = "Pre-populated reports",
-    description = "Download pre-populated Word or Power Point documents with the results. Note that you may select the “Advanced Report (~10 min)” box to receive more detailed information - including all dynamic graphs - which takes longer to produce and download.",
+    description = "Download pre-populated Word or Power Point documents with the results. Note that you may select the \u201cAdvanced Report (~10 min)\u201d box to receive more detailed information - including all dynamic graphs - which takes longer to produce and download.",
     is_id = T
   )$
   step( 
     "download_data_opt",
     title = "Data used in graphs",
-    description = "Click the download “Data” button to download a CSV file that contains the data needed to recreate the benchmarking graphs.",
+    description = "Click the download \u201cData\u201d button to download a CSV file that contains the data needed to recreate the benchmarking graphs.",
     is_id = T
   )$
   step( 
     "[data-id ='threshold']",
     title = "Benchmarking Thresholds",
-    description = "The default benchmarking thresholds for weak, emerging and strong institutions are 25th and 50th percentiles. You can also select the “Terciles” option, which uses 33rd and 66th percentiles as thresholds instead.",
+    description = "The default benchmarking thresholds for weak, emerging and strong institutions are 25th and 50th percentiles. You can also select the \u201cTerciles\u201d option, which uses 33rd and 66th percentiles as thresholds instead.",
     is_id = F
   )$
  step( 

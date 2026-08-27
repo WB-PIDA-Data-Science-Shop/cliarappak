@@ -45,7 +45,7 @@ mod_methodology_ui <- function(id, app_data) {
 
       ),
       p("The proposed clusters are based on an effort to capture key functions that different institutions perform. In so doing, the categorization process faces a trade-off between aggregation and narrowness, where the categories ought to be broad enough to capture enough indicators and policy spaces, but narrow enough to guide a deep qualitative analysis as well as a fruitful and engaged conversation with the country. In addition, the categorization also faces the limitations of data availability."),
-      p('All country-level indicators can be downloaded in the “Data” tab.')
+      p('All country-level indicators can be downloaded in the \u201cData\u201d tab.')
     ),
 
     box(
@@ -54,8 +54,8 @@ mod_methodology_ui <- function(id, app_data) {
       collapsed = TRUE,
       title = "Closeness to frontier",
 
-      p('The dashboard uses a “Closeness to Frontier"(CTF) methodology. The CTF methodology allows to assess country’s performance across institutional indicators by comparing it with the “global frontier”, where the global frontier is the world’s best performer. For each indicator, a country’s performance is rescaled on a 0-1 scale using the linear transformation (worst–y)/(worst–frontier), where 1 represents the best performer and 0 the worst performer. The higher the score, the closer a country is to the best performer and the lower the score, the closer a country is to the worst performer, and more distant to the frontier. The best and worst performers are identified using available data from the global sample (i.e., considering all countries for which data is available), and using the relevant time period according to the benchmarking approach –i.e., whether it estimates the static (default) CTF benchmarking scores or dynamic CTF scores. In the static case, the average of the 2019-2023 period is used.'),
-      p('For each institutional family, the CTF scores obtained for each indicator are aggregated through simple averaging into one CTF score at family level. This captures the overall performance for an institutional family relatively to the “global frontier”, while the performance across the indicators will help identify the most challenging areas for institutional strengthening.')
+      p('The dashboard uses a \u201cCloseness to Frontier"(CTF) methodology. The CTF methodology allows to assess country\u2019s performance across institutional indicators by comparing it with the \u201cglobal frontier\u201d, where the global frontier is the world\u2019s best performer. For each indicator, a country\u2019s performance is rescaled on a 0-1 scale using the linear transformation (worst\u2013y)/(worst\u2013frontier), where 1 represents the best performer and 0 the worst performer. The higher the score, the closer a country is to the best performer and the lower the score, the closer a country is to the worst performer, and more distant to the frontier. The best and worst performers are identified using available data from the global sample (i.e., considering all countries for which data is available), and using the relevant time period according to the benchmarking approach \u2013i.e., whether it estimates the static (default) CTF benchmarking scores or dynamic CTF scores. In the static case, the average of the 2019-2023 period is used.'),
+      p('For each institutional family, the CTF scores obtained for each indicator are aggregated through simple averaging into one CTF score at family level. This captures the overall performance for an institutional family relatively to the \u201cglobal frontier\u201d, while the performance across the indicators will help identify the most challenging areas for institutional strengthening.')
 
     ),
 
@@ -65,11 +65,11 @@ mod_methodology_ui <- function(id, app_data) {
       collapsed = TRUE,
       title = "Percentile analysis and comparator countries",
 
-      p('The CTF scores compare the country’s performance with the best and worst performers at global level. However, how does the country compare relatively to a set of chosen comparators?'),
+      p('The CTF scores compare the country\u2019s performance with the best and worst performers at global level. However, how does the country compare relatively to a set of chosen comparators?'),
       p('The dashboard uses percentile distribution and traffic light coloring to capture the areas where the largest institutional gaps exist, ',
         HTML('<b>relative to the set of country comparators</b>'),
         '. Relative institutional weaknesses and strengths are defined based on the percentile in which each country indicator belongs. This methodology requires teams to make an informed decision on the set of comparator countries used for the benchmarking, since institutional weaknesses and strengths are identified relatively to those comparator countries.'),
-      p('The “Closeness to Frontier” (length of the bar) and the percentile analysis (color of the bar) capture two related but different performance dimensions. The CTF compares the country’s performance with the best and worst performers. The percentile analysis benchmarks the country’s performance with all the set of other comparator countries. For example, it could be that for one indicator or institutional cluster the CTF score is relatively high and close to 1 (indicating in fact ‘closeness to the frontier’) but, at the same time, this dimension is marked as an institutional weakness (red coloring) because the country’s performance is still worse than the majority of comparator countries.'),
+      p('The \u201cCloseness to Frontier\u201d (length of the bar) and the percentile analysis (color of the bar) capture two related but different performance dimensions. The CTF compares the country\u2019s performance with the best and worst performers. The percentile analysis benchmarks the country\u2019s performance with all the set of other comparator countries. For example, it could be that for one indicator or institutional cluster the CTF score is relatively high and close to 1 (indicating in fact \u2018closeness to the frontier\u2019) but, at the same time, this dimension is marked as an institutional weakness (red coloring) because the country\u2019s performance is still worse than the majority of comparator countries.'),
       p('The percentile analysis requires indicators to be available for the base country, while it also effectively drops those indicators whose distribution precludes this percentile classification (i.e., low variance).')
     ),
 
@@ -174,7 +174,7 @@ mod_methodology_server <- function(id, app_data) {
       downloadHandler(
         filename = "CLIAR Benchmarking.pdf",
         content = function(file) {
-          file.copy(app_sys("app/www/CLIAR Benchmarking.pdf"), file)
+          file.copy(app_sys("app/www/CLIAR_Benchmarking.pdf"), file)
         }
       )
   })

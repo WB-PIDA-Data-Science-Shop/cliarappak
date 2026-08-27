@@ -68,7 +68,6 @@ check_input_file_exists <- function(){
 #' @param text the message to be displayed
 #'
 #' @return a toast message informing the end user of an action that has just been carried out
-#' @export
 #'
 #' @noRd
 #'
@@ -89,8 +88,7 @@ toast_messages_func <- function(type, text) {
 #' @param title title of the message
 #' @param text the message to be displayed
 #'
-#' @return a modal message 
-#' @export
+#' @return a modal message
 #'
 #' @noRd
 #'

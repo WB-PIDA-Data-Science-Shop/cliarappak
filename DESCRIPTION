@@ -22,7 +22,6 @@ Imports:
     plotly,
     DT,
     shinyjs,
-    shinyBS,
     shinycssloaders,
     shinybusy,
     shinyWidgets,
@@ -30,11 +29,9 @@ Imports:
     shinyFeedback,
     cicerone,
     colourpicker,
-    bsplus,
     sf,
     haven,
     zoo,
-    formattable,
     data.table,
     hrbrthemes,
     htmltools,
@@ -50,21 +47,21 @@ Imports:
     ggplot2,
     stringr,
     purrr,
-    tibble,
     readr,
+    stats,
     rmarkdown,
-    knitr,
     waiter,
     forcats,
+    rsconnect,
     cliaretl
 Suggests:
     testthat (>= 3.0.0),
     flextable,
+    knitr,
     Hmisc,
     janitor,
     RColorBrewer,
-    config,
-    rsconnect
+    config
 Remotes:
     WB-PIDA-Data-Science-Shop/cliaretl
 Config/testthat/edition: 3

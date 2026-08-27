@@ -73,7 +73,7 @@ mod_benchmark_ui <- function(id, app_data) {
               icon = "circle-question",
               title = "Saving and loading Selection of Countries",
               content = c(
-                "You can save your selected inputs to return to at a future time: click “Save Selection of Countries” button to download a .rds file to your computer with that information. When you return to the dashboard, you can click “Load Selection of Countries” button and then “Browse” to select this same .rds file. Loading this .rds file will re-populate all of the selections that you previously made."
+                "You can save your selected inputs to return to at a future time: click \u201cSave Selection of Countries\u201d button to download a .rds file to your computer with that information. When you return to the dashboard, you can click \u201cLoad Selection of Countries\u201d button and then \u201cBrowse\u201d to select this same .rds file. Loading this .rds file will re-populate all of the selections that you previously made."
               ),
               buttonLabel = "Close",
               fade = T,
@@ -280,7 +280,7 @@ mod_benchmark_ui <- function(id, app_data) {
               icon = "circle-question",
               title = "Benchmarking Thresholds",
               content = c(
-                "The default benchmarking thresholds for weak, emerging and strong institutions are 25th and 50th percentiles. You can also select the “Terciles” option, which uses 33rd and 66th percentiles as thresholds instead."
+                "The default benchmarking thresholds for weak, emerging and strong institutions are 25th and 50th percentiles. You can also select the \u201cTerciles\u201d option, which uses 33rd and 66th percentiles as thresholds instead."
               ),
               buttonLabel = "Close",
               fade = T,
@@ -444,10 +444,10 @@ mod_benchmark_ui <- function(id, app_data) {
             title = "Pre-populated reports and data",
             content = c(
               "Download pre-populated Word or Power Point documents with the results. Note that you may select the
-              “Advanced Report” box to receive more detailed information - including all dynamic graphs. Select the help
+              \u201cAdvanced Report\u201d box to receive more detailed information - including all dynamic graphs. Select the help
               button next to the checkbox to learn more.
 
-              Click the download “Data” button to download a CSV file that contains the data needed to recreate the benchmarking graphs."
+              Click the download \u201cData\u201d button to download a CSV file that contains the data needed to recreate the benchmarking graphs."
             ),
             buttonLabel = "Close",
             fade = T,
@@ -834,8 +834,25 @@ mod_benchmark_server <- function(id, app_data) {
       custom_group_fields_reactive()
     })
 
-    ## Generate a dataframe containing the custom groups
-    custom_grps_df <- shiny::eventReactive(input$save_custom_grps, {
+    ## Generate a dataframe containing the custom groups.
+    ##
+    ## `custom_grps_df` used to be a `shiny::eventReactive`, which is
+    ## read-only -- the "once the save button is clicked" block below tried
+    ## to reset it via `custom_grps_df() <- NULL`, which isn't valid for an
+    ## eventReactive (no such replacement function exists) and would throw a
+    ## real runtime error if ever reached. cliarapp's server.R has the exact
+    ## same code (down to the same comment: "convert the custom_grps_df
+    ## reactive to NULL"), so this was always the intent, just not achievable
+    ## with an eventReactive. Converted to a `reactiveVal` so it actually can
+    ## be reset -- every other read site in this file still just calls
+    ## `custom_grps_df()`, identical to before. The compute-then-reset logic
+    ## is kept in one observer (rather than the original's two, both bound to
+    ## `input$save_custom_grps`) so the reset always sees the value just
+    ## computed, without depending on the relative order two separate
+    ## observers happen to flush in.
+    custom_grps_df <- shiny::reactiveVal(NULL)
+
+    shiny::observeEvent(input$save_custom_grps, {
       n_fields <- input$custom_grps_count
 
       if (n_fields > 0) {
@@ -852,26 +869,23 @@ mod_benchmark_server <- function(id, app_data) {
           }
         }
 
-        custom_grps_df <- dplyr::bind_rows(custom_grps_list)
+        new_grps_df <- dplyr::bind_rows(custom_grps_list)
       } else {
-        custom_grps_df <- NULL
+        new_grps_df <- NULL
       }
 
-      if (nrow(custom_grps_df) == 0) {
-        custom_grps_df <- NULL
+      if (nrow(new_grps_df) == 0) {
+        new_grps_df <- NULL
       }
 
-      return(custom_grps_df)
-    })
+      custom_grps_df(new_grps_df)
 
-    ## once the save button is clicked
-    shiny::observeEvent(input$save_custom_grps, {
-      if (is.null(custom_grps_df())) {
+      if (is.null(new_grps_df)) {
         shinyWidgets::updatePrettyCheckbox(session = session, inputId = "create_custom_grps", value = FALSE)
       }
 
       if (input$create_custom_grps == FALSE) {
-        custom_grps_df() <- NULL
+        custom_grps_df(NULL)
       }
     })
 

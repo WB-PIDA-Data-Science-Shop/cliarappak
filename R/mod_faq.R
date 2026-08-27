@@ -104,7 +104,7 @@ mod_faq_ui <- function(id) {
       collapsed = TRUE,
       title = "Why are certain indicators and clusters not included in the dynamic benchmarking?",
       p(
-        "Compared to static benchmarking, dynamic benchmarking is more selective (or “demanding”) with respect to indicators, considering their panel characteristics. Hence, indicators that do not offer multiple measurements for the same country are excluded from the analysis – e.g., OECD PMR and PEFA, which consequently excludes the SOE Governance Institutions and Public Finance Institutions indicator clusters from dynamic benchmarking"
+        "Compared to static benchmarking, dynamic benchmarking is more selective (or \u201cdemanding\u201d) with respect to indicators, considering their panel characteristics. Hence, indicators that do not offer multiple measurements for the same country are excluded from the analysis \u2013 e.g., OECD PMR and PEFA, which consequently excludes the SOE Governance Institutions and Public Finance Institutions indicator clusters from dynamic benchmarking"
       )
     ),
 
@@ -176,7 +176,7 @@ mod_faq_ui <- function(id) {
       collapsed = TRUE,
       title = "Why are certain cluster averages missing when I download the data even if there is non-missing data on the indicators of that cluster?",
       p(
-        "A balanced sample of individual CTF scores is aggregated by cluster to create cluster-level CTF scores. For each institutional cluster, a “balanced” subset of countries with full coverage (i.e., non-missing data) across all indicators within each cluster is created. This ensures that each cluster-level aggregate score relies on the same set of indicators for every country, allowing for robust and methodically sound inferences. The CTF cluster-level score is computed via simple averaging of the indicators within each cluster. This cluster-level score captures the overall performance for a given institutional category relative to the “global frontier.” The drawback of this robust methodological aggregation decision is that the data requirement is higher. Several families in both the static and dynamic versions do not meet the data requirements for meaningful aggregation (i.e., the balanced sample is too small or empty), and thus CTF cluster scores are not computed."
+        "A balanced sample of individual CTF scores is aggregated by cluster to create cluster-level CTF scores. For each institutional cluster, a \u201cbalanced\u201d subset of countries with full coverage (i.e., non-missing data) across all indicators within each cluster is created. This ensures that each cluster-level aggregate score relies on the same set of indicators for every country, allowing for robust and methodically sound inferences. The CTF cluster-level score is computed via simple averaging of the indicators within each cluster. This cluster-level score captures the overall performance for a given institutional category relative to the \u201cglobal frontier.\u201d The drawback of this robust methodological aggregation decision is that the data requirement is higher. Several families in both the static and dynamic versions do not meet the data requirements for meaningful aggregation (i.e., the balanced sample is too small or empty), and thus CTF cluster scores are not computed."
       )
     ),
 

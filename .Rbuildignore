@@ -5,3 +5,5 @@
 ^dev$
 ^MIGRATION_GUIDE\.md$
 ^rsconnect$
+^\.claude$
+^\.vscode$

@@ -47,6 +47,7 @@
 #'   radioGroupButtons updateCheckboxGroupButtons updatePickerInput
 #' @importFrom shinyjs toggleState useShinyjs
 #' @importFrom plotly config ggplotly layout plotlyOutput renderPlotly style
+#' @importFrom stats median na.omit quantile setNames
 #' @importFrom forcats fct_reorder
 #' @importFrom hrbrthemes theme_ipsum
 #' @importFrom zoo na.approx

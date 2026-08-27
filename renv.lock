@@ -888,47 +888,6 @@
       "Maintainer": "Carson Sievert <carson@posit.co>",
       "Repository": "CRAN"
     },
-    "bsplus": {
-      "Package": "bsplus",
-      "Version": "0.1.5",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Adds Functionality to the R Markdown + Shiny Bootstrap Framework",
-      "Authors@R": "c( person( given = \"Ian\", family = \"Lyttle\", email = \"ijlyttle@me.com\", role = c(\"aut\", \"cre\"), comment = c(ORCID = \"0000-0001-9962-4849\"), ), person(given = \"Alex\", family = \"Shum\", email = \"alex@ALShum.com\", role = c(\"ctb\")), person(given = \"Emerson\", family = \"Berry\", email = \"berrye123@gmail.com\", role = c(\"ctb\")) )",
-      "Description": "The Bootstrap framework lets you add some JavaScript functionality to your web site by adding attributes to your HTML tags - Bootstrap takes care of the JavaScript <https://getbootstrap.com/docs/3.3/javascript/>. If you are using R Markdown or Shiny, you can use these functions to create collapsible sections, accordion panels, modals, tooltips, popovers, and an accordion sidebar framework (not described at Bootstrap site). Please note this package was designed for Bootstrap 3.3.",
-      "License": "MIT + file LICENSE",
-      "URL": "https://ijlyttle.github.io/bsplus/, https://github.com/ijlyttle/bsplus",
-      "Depends": [
-        "R (>= 3.3.0)"
-      ],
-      "Imports": [
-        "htmltools",
-        "magrittr",
-        "purrr",
-        "lubridate",
-        "stringr",
-        "rmarkdown",
-        "glue",
-        "jsonlite",
-        "methods"
-      ],
-      "BugReports": "https://github.com/ijlyttle/bsplus/issues",
-      "RoxygenNote": "7.3.2",
-      "Encoding": "UTF-8",
-      "Suggests": [
-        "testthat",
-        "shiny",
-        "covr",
-        "knitr",
-        "markdown",
-        "withr",
-        "litedown"
-      ],
-      "NeedsCompilation": "no",
-      "Author": "Ian Lyttle [aut, cre] (<https://orcid.org/0000-0001-9962-4849>), Alex Shum [ctb], Emerson Berry [ctb]",
-      "Maintainer": "Ian Lyttle <ijlyttle@me.com>",
-      "Repository": "CRAN"
-    },
     "cachem": {
       "Package": "cachem",
       "Version": "1.1.0",
@@ -2272,43 +2231,6 @@
       "NeedsCompilation": "yes",
       "Author": "R Core Team [aut, cph, cre] (ROR: <https://ror.org/02zz1nj61>), Roger Bivand [ctb, cph], Vincent J. Carey [ctb, cph], Saikat DebRoy [ctb, cph], Stephen Eglen [ctb, cph], Rajarshi Guha [ctb, cph], Swetlana Herbrandt [ctb], Nicholas Lewin-Koh [ctb, cph], Mark Myatt [ctb, cph], Michael Nelson [ctb], Ben Pfaff [ctb], Brian Quistorff [ctb], Frank Warmerdam [ctb, cph], Stephen Weigand [ctb, cph], Free Software Foundation, Inc. [cph]",
       "Maintainer": "R Core Team <R-core@R-project.org>",
-      "Repository": "CRAN"
-    },
-    "formattable": {
-      "Package": "formattable",
-      "Version": "0.2.1",
-      "Source": "Repository",
-      "Title": "Create 'Formattable' Data Structures",
-      "Authors@R": "c( person(\"Kun\", \"Ren\", role = c(\"aut\", \"cre\"), email = \"ken@renkun.me\"), person(\"Kenton\", \"Russell\", role = \"aut\", email = \"kent.russell@timelyportfolio.com\") )",
-      "Description": "Provides functions to create formattable vectors and data frames. 'Formattable' vectors are printed with text formatting, and formattable data frames are printed with multiple types of formatting in HTML to improve the readability of data presented in tabular form rendered in web pages.",
-      "Depends": [
-        "R (> 3.0.2)"
-      ],
-      "Date": "2021-01-05",
-      "Imports": [
-        "methods",
-        "htmltools",
-        "htmlwidgets",
-        "knitr",
-        "rmarkdown"
-      ],
-      "License": "MIT + file LICENSE",
-      "LazyData": "true",
-      "URL": "https://renkun-ken.github.io/formattable/, https://github.com/renkun-ken/formattable",
-      "BugReports": "https://github.com/renkun-ken/formattable/issues",
-      "ByteCompile": "TRUE",
-      "Suggests": [
-        "testthat",
-        "DT",
-        "shiny",
-        "covr"
-      ],
-      "RoxygenNote": "7.1.1",
-      "VignetteBuilder": "knitr",
-      "Encoding": "UTF-8",
-      "NeedsCompilation": "no",
-      "Author": "Kun Ren [aut, cre], Kenton Russell [aut]",
-      "Maintainer": "Kun Ren <ken@renkun.me>",
       "Repository": "CRAN"
     },
     "fresh": {
@@ -5601,31 +5523,6 @@
       "NeedsCompilation": "no",
       "Author": "Winston Chang [aut] (ORCID: <https://orcid.org/0000-0002-1576-2126>), Joe Cheng [aut], JJ Allaire [aut], Carson Sievert [aut, cre] (ORCID: <https://orcid.org/0000-0002-4958-2844>), Barret Schloerke [aut] (ORCID: <https://orcid.org/0000-0001-9986-114X>), Garrick Aden-Buie [aut] (ORCID: <https://orcid.org/0000-0002-7111-0077>), Yihui Xie [aut], Jeff Allen [aut], Jonathan McPherson [aut], Alan Dipert [aut], Barbara Borges [aut], Posit Software, PBC [cph, fnd] (ROR: <https://ror.org/03wc8by49>), jQuery Foundation [cph] (jQuery library and jQuery UI library), jQuery contributors [ctb, cph] (jQuery library; authors listed in inst/www/shared/jquery-AUTHORS.txt), jQuery UI contributors [ctb, cph] (jQuery UI library; authors listed in inst/www/shared/jqueryui/AUTHORS.txt), Mark Otto [ctb] (Bootstrap library), Jacob Thornton [ctb] (Bootstrap library), Bootstrap contributors [ctb] (Bootstrap library), Twitter, Inc [cph] (Bootstrap library), Prem Nawaz Khan [ctb] (Bootstrap accessibility plugin), Victor Tsaran [ctb] (Bootstrap accessibility plugin), Dennis Lembree [ctb] (Bootstrap accessibility plugin), Srinivasu Chakravarthula [ctb] (Bootstrap accessibility plugin), Cathy O'Connor [ctb] (Bootstrap accessibility plugin), PayPal, Inc [cph] (Bootstrap accessibility plugin), Stefan Petre [ctb, cph] (Bootstrap-datepicker library), Andrew Rowls [ctb, cph] (Bootstrap-datepicker library), Brian Reavis [ctb, cph] (selectize.js library), Salmen Bejaoui [ctb, cph] (selectize-plugin-a11y library), Denis Ineshin [ctb, cph] (ion.rangeSlider library), Sami Samhuri [ctb, cph] (Javascript strftime library), SpryMedia Limited [ctb, cph] (DataTables library), Ivan Sagalaev [ctb, cph] (highlight.js library), R Core Team [ctb, cph] (tar implementation from R)",
       "Maintainer": "Carson Sievert <carson@posit.co>",
-      "Repository": "CRAN"
-    },
-    "shinyBS": {
-      "Package": "shinyBS",
-      "Version": "0.65.0",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Extra Twitter Bootstrap Components for Shiny",
-      "Date": "2026-03-18",
-      "Authors@R": "c( person(given = \"Eric\", family = \"Bailey\", email = \"ebailey@idem.in.gov\",  role = c(\"aut\") ), person(given = \"Federico\", family = \"Marini\", email = \"marinif@uni-mainz.de\",  role = c(\"cre\", \"ctb\"), comment = c(ORCID = \"0000-0003-3252-7758\")), person(given = \"Jesse\", family = \"Koops\", email = \"Jesse.Koops@cito.nl\",  role = c(\"ctb\") ) )",
-      "Description": "Adds easy access to additional Twitter Bootstrap components to Shiny.",
-      "Imports": [
-        "shiny (>= 0.13.2)",
-        "htmltools",
-        "stats",
-        "jsonlite"
-      ],
-      "URL": "https://github.com/federicomarini/shinyBS/",
-      "BugReports": "https://github.com/federicomarini/shinyBS/issues",
-      "License": "GPL-3",
-      "RoxygenNote": "7.3.3",
-      "Encoding": "UTF-8",
-      "NeedsCompilation": "no",
-      "Author": "Eric Bailey [aut], Federico Marini [cre, ctb] (ORCID: <https://orcid.org/0000-0003-3252-7758>), Jesse Koops [ctb]",
-      "Maintainer": "Federico Marini <marinif@uni-mainz.de>",
       "Repository": "CRAN"
     },
     "shinyFeedback": {

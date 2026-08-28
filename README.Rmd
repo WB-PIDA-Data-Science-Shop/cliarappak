@@ -1,0 +1,159 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# cliarappak
+
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
+The goal of cliarappak is to package the **Country-Level Institutional Assessment
+and Review (CLIAR) Benchmarking Dashboard** as an installable, reproducible
+[`golem`](https://thinkr-open.github.io/golem/) Shiny application. It replaces the
+original script-style `cliarapp` project with a proper R package, while keeping
+the dashboard itself unchanged for end users. It provides the following features:
+
+-   Country Benchmarking: Compares institutional indicator performance for a base
+    country against comparator countries or predefined groups using
+    closeness-to-frontier (CTF) scores.
+
+-   Modular Architecture: Each dashboard tab is a self-contained Shiny module
+    (`mod_*.R`), wired together through a single golem `app_ui()` / `app_server()`
+    pair. Shared reactive state is passed between modules as explicit arguments.
+
+-   Reproducible Data: All indicator data is sourced at runtime from the
+    [`cliaretl`](https://github.com/WB-PIDA-Data-Science-Shop/cliaretl) package —
+    no data files are bundled in this repository.
+
+-   One-Command Deployment: `deploy_app()` regenerates the Posit Connect entry
+    file with the current runtime options baked in, then publishes it, so a
+    chosen data vintage survives Connect's own restart and scale-out schedule.
+
+## Project Structure
+
+The package follows the standard golem layout:
+
+```
+cliarappak/
+├── R/                        # Package source
+│   ├── run_app.R             # Launches the Shiny application
+│   ├── app_ui.R              # Top-level golem UI (bs4Dash dashboard shell)
+│   ├── app_server.R          # Top-level golem server (wires the modules)
+│   ├── app_config.R          # app_sys() and golem config helpers
+│   ├── fct_app_data.R        # Builds the shared data objects from cliaretl
+│   ├── fct_*.R               # Pure helper / data-preparation functions
+│   ├── mod_*.R               # One Shiny module per dashboard tab
+│   ├── guides.R              # Cicerone guided-tour step definitions
+│   └── deploy_app.R          # Posit Connect deployment wrapper
+├── inst/
+│   ├── app/www/              # Static assets (CSS, images, PPTX/DOCX templates)
+│   ├── rmd/                  # Word and coverage report templates
+│   ├── extdata/              # publicationsList.xlsx
+│   └── golem-config.yml      # golem configuration
+├── dev/                      # golem development scripts (run_dev.R)
+├── man/                      # Auto-generated R documentation (via roxygen2)
+├── tests/                    # Unit tests (testthat)
+├── renv/                     # Dependency management (via renv)
+├── DESCRIPTION               # Package metadata and dependencies
+├── NAMESPACE                 # Package namespace (exports / imports)
+├── renv.lock                 # Lockfile for reproducible package versions
+├── README.Rmd               # Source file for README.md
+└── README.md                # Project documentation (rendered version)
+```
+
+## Dashboard Tabs
+
+| Tab | Description |
+|-----|-------------|
+| **Country Benchmarking** | Closeness-to-frontier scores for a base country vs. comparator countries or groups, with static and dynamic (time-varying) views |
+| **Cross-Country Comparison** | Indicator-level bar charts across the selected countries |
+| **Bivariate Correlation** | Scatter plots of two indicators with an optional linear fit |
+| **World Map** | Choropleth map of CTF scores or original indicator values |
+| **Time Trends** | Year-on-year changes in raw indicator values |
+| **Data** | Browsable data table with Excel / CSV / Stata download |
+| **Methodology & User Guide** | Methodology documentation, user guide, and downloads |
+| **Publications** | Country-filterable list of CLIAR-related publications |
+
+## Package Installation
+
+Install the cliarappak package with:
+
+``` r
+# Step 1. Install the packages 'pak' or 'remotes' if you don't have them:
+
+# install.packages("pak")
+# install.packages("remotes")
+
+
+# Step 2. Install cliarappak from GitHub:
+remotes::install_github("WB-PIDA-Data-Science-Shop/cliarappak")
+```
+
+This also installs `cliaretl` from GitHub (declared in `Remotes:`), which
+provides all of the dashboard's data.
+
+## Running the App
+
+``` r
+library(cliarappak)
+
+# Launch the dashboard
+run_app()
+
+# Preview a specific dynamic-benchmarking data vintage
+run_app(dynamic_year_cutoff = 2022)
+```
+
+For development, restore the locked environment and use the golem workflow:
+
+``` r
+renv::restore()
+devtools::load_all()
+golem::run_dev()
+```
+
+## Deployment
+
+The dashboard is deployed to Posit Connect via `deploy_app()`. It reads the
+target application GUID from an environment variable
+(`cliarappak_dev_guid` or `cliarappak_prod_guid`, set in `.Renviron` or via
+`Sys.setenv()`):
+
+``` r
+# Development slot
+deploy_app(type = "dev")
+
+# Production slot, with the auto-derived current-cycle cutoff
+deploy_app(type = "prod")
+
+# Ship a specific data vintage
+deploy_app(type = "prod", dynamic_year_cutoff = 2022)
+```
+
+## Data
+
+All data is provided at runtime by the
+[`cliaretl`](https://github.com/WB-PIDA-Data-Science-Shop/cliaretl) package,
+including:
+
+-   `closeness_to_frontier_static` / `closeness_to_frontier_dynamic` — CTF scores
+-   `db_variables_final` — indicator metadata
+-   `wb_country_groups` / `wb_country_list` — country and group reference tables
+
+## Reproducibility
+
+The cliarappak package uses `renv` to lock package versions, ensuring consistent
+results across environments. To set up the project environment for development,
+run `renv::restore()`.

@@ -38,7 +38,7 @@
   color: white;
 } 
 
-#save_inputs{
+.btn.save_inputs_btn{
   background-color: #89baf5;
   color: white;
   border-radius: 20px;

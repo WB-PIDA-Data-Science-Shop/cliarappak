@@ -92,7 +92,8 @@ mod_benchmark_ui <- function(id, app_data) {
           shinyjs::disabled(
             downloadButton(
               ns("save_inputs"),
-              "Save"
+              "Save",
+              class = "save_inputs_btn"
             )
           )
         )

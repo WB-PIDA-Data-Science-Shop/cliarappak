@@ -2,16 +2,21 @@
 % Please edit documentation in R/mod_terms.R
 \name{mod_terms_ui}
 \alias{mod_terms_ui}
-\title{terms of use module UI}
+\title{Terms of Use module UI}
 \usage{
 mod_terms_ui(id)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id (namespacing only; no inputs are read).}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-Static content only -- no server logic.
+The "Terms of use and Disclaimers" tab: a single card with the citation
+request and the standard World Bank disclaimer. Static content only -- there
+is no \code{mod_terms_server()}.
+}
+\seealso{
+\code{\link[=mod_faq_ui]{mod_faq_ui()}}, \code{\link[=mod_methodology_ui]{mod_methodology_ui()}}.
 }

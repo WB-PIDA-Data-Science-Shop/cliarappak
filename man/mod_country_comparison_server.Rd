@@ -2,20 +2,39 @@
 % Please edit documentation in R/mod_country_comparison.R
 \name{mod_country_comparison_server}
 \alias{mod_country_comparison_server}
-\title{country comparison module server}
+\title{Cross-Country Comparison module server}
 \usage{
 mod_country_comparison_server(id, bench, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_country_comparison_ui]{mod_country_comparison_ui()}}.}
 
-\item{bench}{Named list of reactives returned by \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.}
+\item{bench}{Named list of reactives from \code{\link[=mod_benchmark_server]{mod_benchmark_server()}} -- see
+Details.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$global_data}, \verb{$variable_names}, \verb{$db_variables}, \verb{$ctf_long_dyn}.}
 }
 \value{
-NULL; called for its side effects.
+A named list with one element, \code{custom_df_bar} (a reactive holding
+this tab's selected custom-group table, or \code{NULL}), consumed by
+\code{\link[=mod_bivariate_server]{mod_bivariate_server()}}. Also registers the picker observers, the \code{bar}
+output and the definition table on \code{session}.
 }
 \description{
-country comparison module server
+Keeps the tab's pickers in sync with the Country Benchmarking tab, resolves
+any custom comparison groups, and renders the bar chart (\code{output$bar}) via
+\code{\link[=static_bar]{static_bar()}} piped into \code{\link[=interactive_bar]{interactive_bar()}}.
+}
+\details{
+\strong{Cross-module contract.} Reads \code{bench$country()}, \code{bench$base_country()},
+\code{bench$groups()}, \code{bench$custom_grps_df()} and \code{bench$select_trigger()} from
+the \code{\link[=mod_benchmark_server]{mod_benchmark_server()}} list. Returns its own \code{custom_df_bar} reactive
+so that \code{\link[=mod_bivariate_server]{mod_bivariate_server()}} can build its highlight group from it -- a
+genuine cross-module dependency (\code{server.R:1971-1979}), threaded through
+\code{app_server()}.
+}
+\seealso{
+\code{\link[=mod_country_comparison_ui]{mod_country_comparison_ui()}}, \code{\link[=static_bar]{static_bar()}}, \code{\link[=interactive_bar]{interactive_bar()}},
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}, \code{\link[=mod_bivariate_server]{mod_bivariate_server()}}.
 }

@@ -2,18 +2,24 @@
 % Please edit documentation in R/mod_world_map.R
 \name{mod_world_map_ui}
 \alias{mod_world_map_ui}
-\title{world map module UI}
+\title{World Map module UI}
 \usage{
 mod_world_map_ui(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_world_map_server]{mod_world_map_server()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$variable_list} for the indicator picker.}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-world map module UI
+The World Map tab: pick an indicator and a value type (latest value vs
+closeness-to-frontier), and see a choropleth of every country with data.
+Controls are a selection \code{box()}; the map itself is a \code{plotlyOutput()}.
+}
+\seealso{
+\code{\link[=mod_world_map_server]{mod_world_map_server()}}, \code{\link[=static_map]{static_map()}}.
 }

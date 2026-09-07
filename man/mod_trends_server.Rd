@@ -2,20 +2,51 @@
 % Please edit documentation in R/mod_trends.R
 \name{mod_trends_server}
 \alias{mod_trends_server}
-\title{time trends module server}
+\title{Time Trends module server}
 \usage{
 mod_trends_server(id, bench, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_trends_ui]{mod_trends_ui()}}.}
 
-\item{bench}{Named list of reactives returned by \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.}
+\item{bench}{Named list of reactives from \code{\link[=mod_benchmark_server]{mod_benchmark_server()}} -- see
+Details for the elements consumed.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$countries}, \verb{$group_list}, \verb{$db_variables}, \verb{$raw_data}, \verb{$country_list}.}
 }
 \value{
-NULL; called for its side effects.
+\code{NULL}, invisibly. Called for its side effects: registers the
+\code{country_trends} / \code{group_trends} / \code{countries_trends} observers and the
+\code{time_series} plotly output on \code{session}.
 }
 \description{
-time trends module server
+Wires up the Time Trends tab: keeps its pickers in step with the shared
+selection state owned by the Country Benchmarking tab, narrows the list of
+available comparison countries to those with enough data for the chosen
+indicator, and renders the time-series plot via \code{\link[=trends_plot]{trends_plot()}}.
+}
+\details{
+\strong{Cross-module contract.} Like every non-benchmark tab, this server reads
+the shared selection state through \code{bench} (the list returned by
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}). Specifically it uses:
+\itemize{
+\item \code{bench$country()} -- the live base-country selection; mirrored into the
+\code{country_trends} picker on every change.
+\item \code{bench$select_trigger()} / \code{bench$base_country()} / \code{bench$groups()} --
+the "Apply"-gated selection; on trigger, country and groups are copied over.
+\item \code{bench$custom_grps_df()} -- user-defined comparison groups, folded into the
+\code{group_trends} choices.
+}
+
+It exposes nothing back to other modules.
+
+\strong{Internal reactives.} \code{custom_df_trend()} subsets \code{bench$custom_grps_df()}
+to the custom groups actually selected here; \code{filtered_countries_trends()}
+returns the comparison countries that have data spanning the base country's
+observed year range for the chosen indicator (via \code{\link[=trends_check_data]{trends_check_data()}}).
+}
+\seealso{
+\code{\link[=mod_trends_ui]{mod_trends_ui()}}, \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}, \code{\link[=trends_plot]{trends_plot()}},
+\code{\link[=trends_check_data]{trends_check_data()}}.
 }

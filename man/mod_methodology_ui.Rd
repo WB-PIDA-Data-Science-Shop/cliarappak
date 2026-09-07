@@ -2,18 +2,27 @@
 % Please edit documentation in R/mod_methodology.R
 \name{mod_methodology_ui}
 \alias{mod_methodology_ui}
-\title{methodology module UI}
+\title{Methodology & User Guide module UI}
 \usage{
 mod_methodology_ui(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_methodology_server]{mod_methodology_server()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Passed for
+parity with the other module UIs; the current layout does not read from
+it.}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-methodology module UI
+The "Methodology & User Guide" tab: the downloadable user guide, an
+explanation of the institutional families and the closeness-to-frontier
+methodology, citation information, and a button to download the full
+indicator definitions as CSV. The download buttons are served by
+\code{\link[=mod_methodology_server]{mod_methodology_server()}}.
+}
+\seealso{
+\code{\link[=mod_methodology_server]{mod_methodology_server()}}, \code{\link[=mod_home_ui]{mod_home_ui()}}.
 }

@@ -2,20 +2,29 @@
 % Please edit documentation in R/mod_benchmark.R
 \name{mod_benchmark_ui}
 \alias{mod_benchmark_ui}
-\title{benchmark module UI}
+\title{Country Benchmarking module UI}
 \usage{
 mod_benchmark_ui(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$countries}, \verb{$flags_with_countries}, \verb{$group_list}, \verb{$variable_list},
+\verb{$plot_height}, ...}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-Country benchmarking tab. Owns almost all of the shared selection state
-(base country, comparison countries/groups, custom groups, family,
-thresholds) that every other tab reads -- see \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.
+The Country Benchmarking tab -- the app's primary view and the owner of
+almost all the shared selection state (base country, comparison
+countries/groups, custom groups, family, thresholds, rank/dots/median
+options) that every other tab reads back through the list returned by
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}. Also hosts the guided tour, the save/load-selection
+buttons (\code{\link[=buttons_func]{buttons_func()}}) and the download buttons that
+\code{\link[=mod_reports_server]{mod_reports_server()}} renders into.
+}
+\seealso{
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}, \code{\link[=mod_reports_server]{mod_reports_server()}}, \code{\link[=static_plot]{static_plot()}}.
 }

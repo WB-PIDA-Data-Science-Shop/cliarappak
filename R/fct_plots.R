@@ -22,6 +22,61 @@ plotly_remove_buttons <-
 
 # Benchmark plots ##############################################################
 
+#' Static benchmarking dot/point plot (Country Benchmarking tab)
+#'
+#' Builds the ggplot behind the Country Benchmarking tab's main figure: one row
+#' per indicator (or per institutional family, on the "Overview" tab), a
+#' coloured point for the base country positioned at its closeness-to-frontier
+#' value, and optionally the comparison-group median and individual comparison
+#' countries. Piped into [interactive_plot()] to become the plotly the user
+#' sees.
+#'
+#' @details
+#' `static_plot()` works on the static (single latest period) dataset;
+#' [static_plot_dyn()] is the year-by-year counterpart.
+#'
+#' The `data` argument is the output of [def_quantiles()] (or, for the Overview
+#' tab, [family_data()] joined to `family_order`) -- it already carries the
+#' `dtf`, `dtt`, `status` and `nrank` columns this function draws from. Indicator
+#' ordering on the y-axis is either taken from `db_variables$rank_id`
+#' (`preset_order = FALSE`) or from the base country's own ranking
+#' (`preset_order = TRUE`). The word "Institutions" is stripped from y-axis
+#' labels (issue #283).
+#'
+#' @param data Long tibble from [def_quantiles()] / [family_data()], filtered to
+#'   the base and comparison countries, with `var_name`, `dtf`, `dtt`, `status`,
+#'   `variable` columns.
+#' @param base_country Character vector of base-country name(s).
+#' @param tab_name Character. The institutional family being shown, or
+#'   `"Overview"`. Drives y-axis ordering and a few layout tweaks.
+#' @param rank Logical. `TRUE` plots percentile rank (`dtt`); `FALSE` plots the
+#'   raw closeness-to-frontier value (`dtf`).
+#' @param group_median Character vector of comparison-group names whose medians
+#'   should be drawn, or `NULL`.
+#' @param custom_df Data frame of user-defined comparison groups
+#'   (`Grp` / `Countries` columns) from `mod_benchmark_server()`, or `NULL`.
+#' @param title Logical. Whether to draw the plot title.
+#' @param dots Logical. Whether to overlay individual comparison-country points.
+#' @param note Character note to print under the plot, or `NULL`.
+#' @param threshold One of `"Default"` or `"Terciles"` -- must match the value
+#'   passed to [def_quantiles()]; sets the `"Weak"/"Emerging"/"Strong"` factor
+#'   levels and legend cut points.
+#' @param preset_order Logical. `TRUE` orders indicators by the base country's
+#'   own value/rank; `FALSE` uses `db_variables$rank_id`.
+#' @param report Logical. `TRUE` when rendering into the downloadable report
+#'   (tweaks sizing/labels).
+#' @param db_variables Indicator dictionary (`app_data$db_variables`) -- supplies
+#'   `rank_id` for indicator ordering.
+#' @param family_order Data frame mapping `family_name` to a numeric
+#'   `family_order` (`app_data$family_order`); used only on the Overview tab.
+#' @param ctf_long Long closeness-to-frontier table (`app_data$ctf_long`) used
+#'   to position the group-median markers.
+#'
+#' @return A `ggplot` object. Returned via an explicit `return()`.
+#'
+#' @seealso [static_plot_dyn()], [interactive_plot()], [plot_notes_function()],
+#'   [def_quantiles()].
+#' @export
 static_plot <-
   function(
     data,
@@ -515,6 +570,28 @@ static_plot <-
 
 # Dynamic benchmark static plot ##############################################################
 
+#' Dynamic (year-by-year) benchmarking plot
+#'
+#' The dynamic-dataset counterpart of [static_plot()]: same figure, but each
+#' indicator is faceted/labelled by `indicator : year` so the user can see how
+#' the base country's position moved over time. Consumes the output of
+#' [def_quantiles_dyn()].
+#'
+#' @details
+#' Indicators with only one year of data for the base country are dropped (a
+#' trend needs at least two points). `ctf_long_dyn` is joined to `db_variables`
+#' for display names and filtered to the same `indicator : year` combinations
+#' present for the base country.
+#'
+#' @inheritParams static_plot
+#' @param data Long tibble from [def_quantiles_dyn()] (carries a `year` column).
+#' @param ctf_long_dyn Long dynamic closeness-to-frontier table
+#'   (`app_data$ctf_long_dyn`) used for the group-median markers.
+#'
+#' @return A `ggplot` object.
+#'
+#' @seealso [static_plot()], [def_quantiles_dyn()], [interactive_plot()].
+#' @export
 static_plot_dyn <-
   function(
     data,
@@ -1007,6 +1084,33 @@ static_plot_dyn <-
   }
 
 
+#' Build the HTML notes block shown under a benchmarking plot
+#'
+#' Assembles the "Notes:" paragraph that appears beneath the Country
+#' Benchmarking figure: who is being compared to whom, the membership of any
+#' custom comparison groups, and the list of indicators that were excluded
+#' because the base country lacks data or the indicator has low variance.
+#'
+#' @details
+#' Indicator names that failed to resolve to a display label (a `NA` after the
+#' dictionary join) are dropped rather than printed as the literal `"NA"`. For
+#' `plot_type == "dynamic"` the function returns `NULL` -- the dynamic plot
+#' carries its own annotations.
+#'
+#' @param y Character. Base-country name(s).
+#' @param z Character vector. Comparison-country / group names.
+#' @param tab_name Character. Institutional family, or `"Overview"` (adds a
+#'   sentence about cluster-level aggregation).
+#' @param miss_var Character vector of excluded-indicator display names --
+#'   typically `c(missing_var(...), low_variance-resolved names)` from
+#'   `mod_benchmark_server()`.
+#' @param plot_type One of `"static"` or `"dynamic"`.
+#' @param custom_df Custom-group data frame (`Grp` / `Countries`), or `NULL`.
+#'
+#' @return A `shiny::HTML` string, or `NULL` when `plot_type == "dynamic"`.
+#'
+#' @seealso [missing_var()], [low_variance()], [static_plot()].
+#' @export
 plot_notes_function <-
   function(y, z, tab_name, miss_var, plot_type, custom_df) {
     # Some indicator codes returned by missing_var()/low_variance() have no
@@ -1086,6 +1190,25 @@ plot_notes_function <-
   }
 
 
+#' Convert a benchmarking ggplot to an interactive plotly
+#'
+#' Takes a [static_plot()] / [static_plot_dyn()] ggplot and turns it into the
+#' plotly widget rendered on the tab: sets a tab-appropriate pixel height,
+#' trims the modebar, names the PNG export after the tab, fixes ggplotly's
+#' mangled legend entries, and (dynamic only) moves the legend to a horizontal
+#' strip.
+#'
+#' @param x A `ggplot` object from [static_plot()] or [static_plot_dyn()].
+#' @param tab_name Character. Institutional family / `"Overview"` -- selects the
+#'   plot height and the export filename.
+#' @param buttons Character vector of plotly modebar button ids to remove
+#'   (typically `plotly_remove_buttons`).
+#' @param plot_type One of `"static"` or `"dynamic"`.
+#'
+#' @return A `plotly` htmlwidget.
+#'
+#' @seealso [static_plot()], [clean_plotly_legend()].
+#' @export
 interactive_plot <-
   function(x, tab_name, buttons, plot_type) {
     if (tab_name == 'Justice Institutions' & plot_type == 'dynamic') {
@@ -1175,6 +1298,29 @@ interactive_plot <-
 
 ## Static map ===================================================================
 
+#' Static choropleth world map for one indicator (World Map tab)
+#'
+#' Builds the ggplot choropleth behind the World Map tab: every country shaded
+#' by its value (or closeness-to-frontier) for a single indicator, with the base
+#' and comparison countries outlined. Piped into [interactive_map()].
+#'
+#' @param source One of `"raw"` (latest observed value, with the observation
+#'   year in the tooltip) or `"ctf"` (2020-2024 closeness-to-frontier average).
+#' @param var Character. Indicator code (the `variable` column) -- used to pick
+#'   the `value_*` / `ctf_*` / `year_*` columns out of `spatial_data`.
+#' @param title Character. Plot title (usually the indicator display name).
+#' @param selected Currently-selected indicator display name (passed through for
+#'   labelling).
+#' @param base_country Character vector of base-country name(s) to outline.
+#' @param comparison_countries Character vector of comparison-country names to
+#'   outline.
+#' @param spatial_data An `sf` polygon layer (`app_data$spatial_data`) carrying
+#'   one `value_<var>` / `ctf_<var>` / `year_<var>` column set per indicator.
+#'
+#' @return A `ggplot` object.
+#'
+#' @seealso [interactive_map()], [check_spatial_data()].
+#' @export
 static_map <-
   function(source, var, title, selected, base_country, comparison_countries, spatial_data) {
     spatial_data <- spatial_data %>%
@@ -1300,6 +1446,26 @@ static_map <-
 
 ## Interactive map =============================================================
 
+#' Convert a world-map ggplot to an interactive plotly
+#'
+#' Turns a [static_map()] ggplot into the plotly widget shown on the World Map
+#' tab: hides the axes, adds the standard World Bank map disclaimer plus the
+#' indicator definition/source/note as a footnote annotation, trims the modebar
+#' and names the PNG export `<var>_map`.
+#'
+#' @param x A `ggplot` object from [static_map()].
+#' @param var Character. Indicator code, used both to look up the definition row
+#'   in `definitions` and to name the export file.
+#' @param definitions Indicator dictionary (`app_data$db_variables`) with
+#'   `variable`, `description`, `source` columns.
+#' @param buttons Character vector of plotly modebar button ids to remove.
+#' @param source One of `"raw"` or `"ctf"` (kept for parity with [static_map()];
+#'   currently only affects commented-out legend styling).
+#'
+#' @return A `plotly` htmlwidget.
+#'
+#' @seealso [static_map()].
+#' @export
 interactive_map <-
   function(x, var, definitions, buttons, source) {
     def <-
@@ -1378,6 +1544,41 @@ interactive_map <-
 
 # Time series ###################################################################
 
+#' Time-series plot for one indicator (Time Trends tab)
+#'
+#' Builds the interactive plotly line chart on the Time Trends tab: the base
+#' country's value of one indicator year by year, overlaid with individual
+#' comparison countries and comparison-group (or custom-group) medians. Unlike
+#' the other plot builders this one returns plotly directly -- there is no
+#' separate `interactive_*` step.
+#'
+#' @details
+#' The x-range is clipped to the years the base country actually has data for.
+#' Group medians are computed across the group's members for each year;
+#' custom groups (from `custom_df`) are handled the same way. Colours are taken
+#' from the three `colourInput()` controls on the tab.
+#'
+#' @param raw_data Wide indicator panel with a `Year` column
+#'   (`app_data$raw_data`).
+#' @param indicator Character. Indicator code (column name in `raw_data`).
+#' @param indicator_name Character. Indicator display name (for the title and
+#'   the `definitions` lookup).
+#' @param base_country Character. Single base-country name.
+#' @param comparison_countries Character vector of individual comparison-country
+#'   names.
+#' @param country_list Country-to-group lookup (`app_data$country_list`) used to
+#'   resolve `groups` to their member countries.
+#' @param groups Character vector of comparison-group names whose medians to
+#'   draw.
+#' @param definitions Indicator dictionary (`app_data$db_variables`).
+#' @param custom_df Custom-group data frame (`Grp` / `Countries`), or `NULL`.
+#' @param base_color,comp_color,groups_color Hex colour strings for the base
+#'   country line, comparison-country lines, and group-median lines.
+#'
+#' @return A `plotly` htmlwidget.
+#'
+#' @seealso [trends_check_data()], [mod_trends_server()].
+#' @export
 trends_plot <- function(
   raw_data,
   indicator,
@@ -1571,6 +1772,33 @@ trends_plot <- function(
 }
 
 # Cross-country comparison #####################################################
+
+#' Horizontal bar chart for one indicator (Cross-Country Comparison tab)
+#'
+#' Builds the ggplot behind the Cross-Country Comparison tab: one horizontal bar
+#' per country for a single indicator's closeness-to-frontier, plus a
+#' "Comparison countries median" bar when more than one comparison country is
+#' selected and one bar per selected group / custom group. Piped into
+#' [interactive_bar()].
+#'
+#' @param data Wide closeness-to-frontier table (`app_data$global_data`) with
+#'   `country_name` plus one column per indicator code.
+#' @param base_country Character. Base-country name.
+#' @param comparison_countries Character vector of comparison-country names.
+#' @param groups Character vector of comparison-group / custom-group names.
+#' @param var Character. Indicator *display name*; resolved to a code via
+#'   `variable_names`.
+#' @param variable_names Indicator dictionary (`app_data$variable_names`).
+#' @param custom_df Custom-group data frame (`Grp` / `Countries`), or `NULL`.
+#' @param color_base_bar,color_comp_bar,color_groups_bar Hex colour strings for
+#'   the base-country bar, comparison-country bars, and group bars.
+#' @param ctf_long_dyn Long dynamic closeness-to-frontier table
+#'   (`app_data$ctf_long_dyn`) used to compute custom-group medians.
+#'
+#' @return A `ggplot` object.
+#'
+#' @seealso [interactive_bar()], [mod_country_comparison_server()].
+#' @export
 static_bar <-
   function(
     data,
@@ -1735,6 +1963,23 @@ static_bar <-
   }
 
 
+#' Convert a cross-country bar ggplot to an interactive plotly
+#'
+#' Turns a [static_bar()] ggplot into the plotly shown on the Cross-Country
+#' Comparison tab: titles the legend "Closeness to frontier", adds the indicator
+#' definition and source as a footnote annotation, trims the modebar and names
+#' the PNG export `<var>_bar`.
+#'
+#' @param x A `ggplot` object from [static_bar()].
+#' @param var Character. Indicator display name -- looked up in `definitions`
+#'   and used for the export filename.
+#' @param definitions Indicator dictionary (`app_data$db_variables`).
+#' @param buttons Character vector of plotly modebar button ids to remove.
+#'
+#' @return A `plotly` htmlwidget.
+#'
+#' @seealso [static_bar()].
+#' @export
 interactive_bar <-
   function(x, var, definitions, buttons) {
     def <-
@@ -1787,6 +2032,34 @@ interactive_bar <-
   }
 
 # Bivariate correlation #####################################################
+
+#' Scatter plot of two indicators across countries (Bivariate Correlation tab)
+#'
+#' Builds the ggplot behind the Bivariate Correlation tab: one point per country
+#' positioned by its closeness-to-frontier on the chosen x and y indicators
+#' (either axis may instead be `"Log GDP per capita, PPP"`), with the base and
+#' comparison countries highlighted and an optional linear fit. Returns both the
+#' plot and the plotted data (the latter is offered as a CSV download).
+#'
+#' @param data Wide indicator table (`app_data$global_data`).
+#' @param base_country Character. Base-country name.
+#' @param comparison_countries Character vector of comparison-country names.
+#' @param high_group Data frame of countries to highlight (a group), possibly
+#'   zero-row; from `mod_bivariate_server()`'s `high_group` reactive.
+#' @param y_scatter,x_scatter Character. Indicator display names for the two
+#'   axes, or the literal `"Log GDP per capita, PPP"`.
+#' @param variable_names Indicator dictionary (`app_data$variable_names`).
+#' @param country_list Country/group metadata (`app_data$country_list`).
+#' @param linear_fit Logical. Whether to add an OLS fit line.
+#' @param color_base_scatter,color_comp_scatter Hex colour strings for the
+#'   base-country and comparison-country points.
+#'
+#' @return A named list: `sc_plot` (a `ggplot`) and `sc_data` (the tibble
+#'   plotted).
+#'
+#' @seealso [interactive_scatter()], [x_scatter_choices()],
+#'   [mod_bivariate_server()].
+#' @export
 static_scatter <-
   function(
     data,
@@ -1963,6 +2236,24 @@ static_scatter <-
     return(list(sc_plot = sc_plot, sc_data = sc_data))
   }
 
+#' Convert a bivariate scatter ggplot to an interactive plotly
+#'
+#' Turns the `sc_plot` from [static_scatter()] into the plotly shown on the
+#' Bivariate Correlation tab: adds both indicators' definitions and sources (and,
+#' when a highlight group is active, a note naming it) as a footnote annotation,
+#' trims the modebar and names the PNG export after the axis pair.
+#'
+#' @param plot The `sc_plot` `ggplot` element returned by [static_scatter()].
+#' @param y_scatter,x_scatter Character. Axis indicator display names, or
+#'   `"Log GDP per capita, PPP"`.
+#' @param definitions Indicator dictionary (`app_data$db_variables`).
+#' @param high_group Data frame of highlighted countries (possibly zero-row).
+#' @param buttons Character vector of plotly modebar button ids to remove.
+#'
+#' @return A `plotly` htmlwidget.
+#'
+#' @seealso [static_scatter()].
+#' @export
 interactive_scatter <-
   function(plot, y_scatter, x_scatter, definitions, high_group, buttons) {
     y <-
@@ -2062,36 +2353,29 @@ interactive_scatter <-
       )
   }
 
-annotations =
-  list(
-    x = -.1,
-    y = -.4,
-    showarrow = F,
-    xref = 'paper',
-    yref = 'paper',
-    align = 'left',
-    font = list(size = note_size)
-  )
-
-# Source: https://stackoverflow.com/questions/69289623/avoid-legend-duplication-in-plotly-conversion-from-ggplot-with-facet-wrap
-# 
-# 
-# -----------------------------------------------------------------------------
-# Function: clean_plotly_legend
-# -----------------------------------------------------------------------------
-# Purpose:
-# Simplifies and cleans the legend of a Plotly object, particularly useful for 
-# handling duplicated legends in facetted ggplots converted to Plotly.
-
-# Parameters:
-# - .pltly_obj: The Plotly object to be cleaned.
-# - .new_legend: (Optional) A vector of new legend group names to replace existing ones.
-
-# Functionality:
-# - Cleans legend group names, removes duplicates, and updates legend visibility.
-# - Ensures legends are grouped logically and hidden where unnecessary.
-
-
+#' De-duplicate the legend of a facetted ggplotly
+#'
+#' When a facetted ggplot is converted with `plotly::ggplotly()` every facet
+#' contributes its own copy of each legend entry, so the legend repeats itself
+#' N times. `clean_plotly_legend()` walks the plotly object's traces, strips the
+#' `"(group,1)"` position suffixes ggplotly adds, collapses the duplicates, and
+#' sets `showlegend = FALSE` on every trace after the first of each group.
+#'
+#' @details
+#' Adapted from
+#' <https://stackoverflow.com/questions/69289623/>. Defines three local
+#' helpers -- `assign_leg_grp()`, `parse_leg_nms()` and `simplify_leg_grps()` --
+#' that are implementation detail and not exported.
+#'
+#' @param .pltly_obj A `plotly` object (typically straight out of
+#'   `plotly::ggplotly()`).
+#' @param .new_legend Optional character vector of replacement legend-group
+#'   names, in order. Default `c()` keeps the cleaned original names.
+#'
+#' @return The `.pltly_obj`, with its `x$data` traces rewritten.
+#'
+#' @seealso [interactive_plot()], [fixfacets()].
+#' @export
 clean_plotly_legend <- function(.pltly_obj, .new_legend = c()) {
   # Cleans up a plotly object legend, particularly when ggplot is facetted
   
@@ -2162,8 +2446,30 @@ clean_plotly_legend <- function(.pltly_obj, .new_legend = c()) {
   
 }
 
-## Source: https://stackoverflow.com/questions/61580973/first-and-last-facets-using-facet-wrap-with-ggplotly-are-larger-than-middle-face
-
+#' Equalise facet widths in a facetted ggplotly
+#'
+#' `plotly::ggplotly()` renders the first and last panels of a `facet_wrap()`
+#' wider than the middle ones. `fixfacets()` rewrites the panel domains, the
+#' grey strip-label background shapes, and the strip-label annotation positions
+#' so every facet is the same width.
+#'
+#' @details
+#' Adapted from
+#' <https://stackoverflow.com/questions/61580973/>. Strip backgrounds are
+#' identified by their fill colour `"rgba(217,217,217,1)"`; strip labels by
+#' matching their text against `facets`. Currently called only from
+#' commented-out code, but kept as a utility for future facetted plotly output.
+#'
+#' @param figure A `plotly` object from `plotly::ggplotly()` of a facetted
+#'   ggplot.
+#' @param facets Character vector of facet (strip) labels, in display order.
+#' @param domain_offset Numeric. Width of the strip-label shape as a fraction of
+#'   the plot width (e.g. `0.16`).
+#'
+#' @return The `figure`, with panel domains and strip positions rewritten.
+#'
+#' @seealso [clean_plotly_legend()].
+#' @export
 fixfacets <- function(figure, facets, domain_offset){
   
   # split x ranges from 0 to 1 into

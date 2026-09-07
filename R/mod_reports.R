@@ -1,6 +1,7 @@
-#' reports module server
+#' Reports module server
 #'
-#' No UI of its own -- the download buttons it serves
+#' Serves the downloadable Word / PowerPoint benchmarking reports and the
+#' Coverage Report. No UI of its own -- the download buttons it serves
 #' (`report`/`advreport`/`pptreport`/`download_Coverage`) live inside
 #' [mod_benchmark_ui()], per the original app's layout. Renders
 #' `inst/rmd/report.Rmd` / `inst/rmd/coverage-report.Rmd` via `app_sys()`
@@ -16,10 +17,21 @@
 #' @param id a unique identifier for this module. Must match the `id` passed
 #'   to [mod_benchmark_server()], since it renders into that module's
 #'   `report`/`advreport`/`pptreport`/`download_Coverage` download buttons.
-#' @param bench Named list of reactives returned by [mod_benchmark_server()].
-#' @param app_data Shared data list from [build_app_data()].
+#' @param bench Named list of reactives from [mod_benchmark_server()]. This
+#'   server is the heaviest consumer of it -- besides the selection reactives
+#'   (`base_country`, `countries`, `threshold`, `rank`, ...) it reuses the
+#'   pre-computed benchmarking datasets `data_avg`, `data_dyn`, `data_dyn_avg`,
+#'   `data_family`, `data_family_dyn` and `custom_df` so the reports don't
+#'   recompute them.
+#' @param app_data Shared data list from [build_app_data()]. Uses `$raw_data`,
+#'   `$db_variables`, `$country_list`, ... and (for the Coverage Report)
+#'   `cliaretl::db_variables` via [prepare_app_data_coverage()].
 #'
-#' @return NULL; called for its side effects.
+#' @return `NULL`, invisibly. Called for its side effects (registers the
+#'   `report` / `advreport` / `pptreport` / `download_Coverage` download
+#'   handlers on `session`).
+#'
+#' @seealso [mod_benchmark_server()], [prepare_app_data_coverage()].
 #' @export
 mod_reports_server <- function(id, bench, app_data) {
   moduleServer(id, function(input, output, session) {

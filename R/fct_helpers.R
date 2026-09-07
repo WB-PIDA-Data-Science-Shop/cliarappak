@@ -1,76 +1,87 @@
-#' buttons
+#' Build a "Save / Load Selection" action button
 #'
-#' @description Generates app buttons
+#' Small UI helper: wraps a [shinyWidgets::actionBttn()] (jelly style, primary,
+#' small, upload icon) in a `div(class = "load_save_btns")`. Used for the
+#' save-selection / load-selection buttons on the Country Benchmarking tab.
 #'
-#' @param id Input id
-#' @param lab Button label
-#' @param id icon. Defaults to None
+#' @param id Character. The `inputId` for the button (already namespaced by the
+#'   calling module).
+#' @param lab Character. The button label.
 #'
-#' @return The return value, if any, from executing the utility.
+#' @return A [shiny::div()] containing the button.
 #'
-#' @noRd
-
+#' @seealso [mod_benchmark_ui()].
+#' @export
 buttons_func <- function(id, lab) {
-  
-  div(class = "load_save_btns", 
+
+  div(class = "load_save_btns",
     shinyWidgets::actionBttn(
       inputId = id,
-      label = lab, 
+      label = lab,
       icon = shiny::icon("upload"),
       style = "jelly",
       color = "primary",
       size = "sm"
     )
   )
-  
+
 }
 
 
-#' Construct user app data directory path
+#' Path to the CLIAR user data directory
 #'
-#' @description
-#' Consists of three pieces of information:
+#' The per-user, per-OS directory where the app persists a saved selection
+#' (`cliar_inputs.rds`). A thin wrapper around
+#' [rappdirs::user_data_dir()] with `appname = "CLIAR"`.
 #'
-#' - System location
-#' - name
+#' @return Character scalar. The absolute path to the user's app data
+#'   directory (not guaranteed to exist yet).
+#'
+#' @seealso [check_input_file_exists()].
 #'
 #' @importFrom rappdirs user_data_dir
-#'
-#' @return Character. Path to user's app data directory
+#' @export
 user_data_dir <- function() {
-  
+
   dir <- rappdirs::user_data_dir(
     appname = "CLIAR"
   )
-  
+
   return(dir)
-  
+
 }
 
 
-#' check_input_file_exists
+#' Does the user have a saved CLIAR selection on disk?
 #'
-#' @description
-#' Check if the input file exists in the user_data_dir() directory
-
-#' @import fs
+#' Checks for `cliar_inputs.rds` in [user_data_dir()] -- the file written when a
+#' user clicks "Save Selection of Countries".
 #'
-#' @return Character. Path to user's app data directory
+#' @return A single logical.
+#'
+#' @seealso [user_data_dir()].
+#'
+#' @importFrom fs file_exists path
+#' @export
 check_input_file_exists <- function(){
   fs::file_exists(fs::path(user_data_dir(), "cliar_inputs.rds"))
 }
 
 
-#' toast_messages_func
+#' Show a bottom-right toast notification
 #'
-#' @description Displays toast messages
-#' @param type success or errors
-#' @param text the message to be displayed
+#' Thin wrapper around [shinyFeedback::showToast()] with the app's standard
+#' options (duplicates prevented, bottom-right position).
 #'
-#' @return a toast message informing the end user of an action that has just been carried out
+#' @param type Character. Toast type -- `"success"`, `"error"`, `"warning"` or
+#'   `"info"`.
+#' @param text Character. The message to display.
 #'
-#' @noRd
+#' @return Called for its side effect (displays the toast); returns the value
+#'   of [shinyFeedback::showToast()] invisibly.
 #'
+#' @seealso [modal_function()].
+#' @export
 toast_messages_func <- function(type, text) {
   shinyFeedback::showToast(
     type = type,
@@ -82,16 +93,19 @@ toast_messages_func <- function(type, text) {
   )
 }
 
-#' modal_function
+#' Show a simple dismissable modal
 #'
-#' @description Displays modal messages
-#' @param title title of the message
-#' @param text the message to be displayed
+#' Thin wrapper around [shiny::showModal()] / [shiny::modalDialog()] for a
+#' one-message modal with a single "Dismiss" button.
 #'
-#' @return a modal message
+#' @param title Character. The modal title.
+#' @param mes The modal body -- a string or any Shiny tag(s).
 #'
-#' @noRd
+#' @return Called for its side effect (displays the modal); returns `NULL`
+#'   invisibly.
 #'
+#' @seealso [toast_messages_func()].
+#' @export
 modal_function <- function(title, mes){
   shiny::showModal(shiny::modalDialog(
     title = title,
@@ -103,13 +117,16 @@ modal_function <- function(title, mes){
 #' Use 'bs4Dash' in 'shiny'
 #'
 #' Allow to use functions from 'bs4Dash' into a classic 'shiny' app,
-#' specifically `bs4ValueBox`, `bs4InfoBox` and `bs4Card`.
-#'
-#' @export
+#' specifically `bs4ValueBox`, `bs4InfoBox` and `bs4Card`. Attaches the
+#' `bs4Dash` HTML dependencies to an empty `div` so they load even when the
+#' page is not a `bs4Dash::bs4DashPage()`.
 #'
 #' @param ... Not used.
 #'
+#' @return A `<div>` with the `bs4Dash` HTML dependencies attached.
+#'
 #' @importFrom htmltools findDependencies attachDependencies
+#' @export
 useBs4Dash <- function(...) {
   if (!requireNamespace(package = "bs4Dash"))
     message("Package 'bs4Dash' is required to run this function")
@@ -124,14 +141,29 @@ useBs4Dash <- function(...) {
 
 #Plotting Prep Functions:
 
-#======= Custom Item: this function prepares customItems
-customItem <- 
-  function(text, 
+#' Build a sidebar `customItem` link
+#'
+#' Constructs a bs4Dash-style sidebar `<li>` containing an external link. Only
+#' renders when `href` is non-`NULL` (a `NULL` `href` returns `NULL`).
+#'
+#' @param text Character. The visible link text.
+#' @param icon A [shiny::icon()] to show before the text. Defaults to a warning
+#'   triangle.
+#' @param href Character URL. The link target (opened in a new tab). If `NULL`,
+#'   nothing is rendered.
+#' @param ... Currently ignored.
+#'
+#' @return A `<li class="nav-item">` tag, or `NULL` when `href` is `NULL`.
+#'
+#' @seealso `app_ui()`, which assembles the sidebar.
+#' @export
+customItem <-
+  function(text,
            icon = shiny::icon("warning"),
            href = NULL, ...) {
-    
-    if (is.null(href)) 
-      
+
+    if (is.null(href))
+
       tags$li(
         a(href = href, icon, text, class = "nav-link", target = "_blank"),
         class = "nav-item"
@@ -139,14 +171,29 @@ customItem <-
   }
 
 #=========== Bivariate Correlation Functions
-#' This function establishes x_axis variable choices
+
+#' X-axis indicator choices for the Bivariate Correlation tab
 #'
-#' @param yvar Selected y-axis variable name to exclude from x-axis choices.
-#' @param db_variables Indicator metadata table (replaces the implicit global
-#'   used by the original `cliarapp` version).
-#' @param family_names Data frame of family variable/name pairs (replaces the
-#'   implicit global used by the original `cliarapp` version).
+#' Builds the grouped choice list for the scatter plot's x-axis picker: every
+#' indicator, organised by institutional family, with the currently selected
+#' y-axis indicator removed so a user cannot plot an indicator against itself.
+#' `"Log GDP per capita, PPP"` is prepended as an ungrouped first choice.
 #'
+#' @details
+#' Replaces the `cliarapp` script-app version that read implicit `db_variables`
+#' and `family_names` globals; both are now passed in.
+#'
+#' @param yvar Character. The selected y-axis indicator display name, excluded
+#'   from every family's list.
+#' @param db_variables Indicator metadata table (`app_data$db_variables`).
+#' @param family_names Data frame of family `variable` / `var_name` pairs
+#'   (`app_data$family_names`).
+#'
+#' @return A named list suitable for `shinyWidgets::pickerInput(choices = )`:
+#'   one element per family (a character vector of indicator names), plus a
+#'   leading `"Log GDP per capita, PPP"` entry.
+#'
+#' @seealso [static_scatter()], [mod_bivariate_ui()].
 #' @export
 x_scatter_choices <- function(yvar, db_variables, family_names){
 

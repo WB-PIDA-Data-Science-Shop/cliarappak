@@ -2,7 +2,7 @@
 % Please edit documentation in R/mod_reports.R
 \name{mod_reports_server}
 \alias{mod_reports_server}
-\title{reports module server}
+\title{Reports module server}
 \usage{
 mod_reports_server(id, bench, app_data)
 }
@@ -11,15 +11,25 @@ mod_reports_server(id, bench, app_data)
 to \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}, since it renders into that module's
 \code{report}/\code{advreport}/\code{pptreport}/\code{download_Coverage} download buttons.}
 
-\item{bench}{Named list of reactives returned by \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.}
+\item{bench}{Named list of reactives from \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}. This
+server is the heaviest consumer of it -- besides the selection reactives
+(\code{base_country}, \code{countries}, \code{threshold}, \code{rank}, ...) it reuses the
+pre-computed benchmarking datasets \code{data_avg}, \code{data_dyn}, \code{data_dyn_avg},
+\code{data_family}, \code{data_family_dyn} and \code{custom_df} so the reports don't
+recompute them.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses \verb{$raw_data},
+\verb{$db_variables}, \verb{$country_list}, ... and (for the Coverage Report)
+\code{cliaretl::db_variables} via \code{\link[=prepare_app_data_coverage]{prepare_app_data_coverage()}}.}
 }
 \value{
-NULL; called for its side effects.
+\code{NULL}, invisibly. Called for its side effects (registers the
+\code{report} / \code{advreport} / \code{pptreport} / \code{download_Coverage} download
+handlers on \code{session}).
 }
 \description{
-No UI of its own -- the download buttons it serves
+Serves the downloadable Word / PowerPoint benchmarking reports and the
+Coverage Report. No UI of its own -- the download buttons it serves
 (\code{report}/\code{advreport}/\code{pptreport}/\code{download_Coverage}) live inside
 \code{\link[=mod_benchmark_ui]{mod_benchmark_ui()}}, per the original app's layout. Renders
 \code{inst/rmd/report.Rmd} / \code{inst/rmd/coverage-report.Rmd} via \code{app_sys()}
@@ -32,4 +42,7 @@ Deliberate departure from \verb{server.R:2571,2631,2692}'s
 MIGRATION_GUIDE.md's Phase 3 plan -- unnecessary now that \code{report.Rmd}'s
 own \code{include_graphics()} calls resolve via \code{system.file()} instead of a
 relative \verb{www/} path.
+}
+\seealso{
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}, \code{\link[=prepare_app_data_coverage]{prepare_app_data_coverage()}}.
 }

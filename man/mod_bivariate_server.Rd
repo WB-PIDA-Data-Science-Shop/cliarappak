@@ -2,25 +2,42 @@
 % Please edit documentation in R/mod_bivariate.R
 \name{mod_bivariate_server}
 \alias{mod_bivariate_server}
-\title{bivariate correlation module server}
+\title{Bivariate Correlation module server}
 \usage{
 mod_bivariate_server(id, bench, app_data, country_comparison)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_bivariate_ui]{mod_bivariate_ui()}}.}
 
-\item{bench}{Named list of reactives returned by \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.}
+\item{bench}{Named list of reactives from \code{\link[=mod_benchmark_server]{mod_benchmark_server()}} -- see
+Details.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$global_data}, \verb{$variable_names}, \verb{$db_variables}, \verb{$country_list}.}
 
-\item{country_comparison}{Named list returned by
-\code{\link[=mod_country_comparison_server]{mod_country_comparison_server()}} -- \code{high_group()} below reads its
-\code{custom_df_bar()}, a genuine cross-module dependency found in
-\code{server.R:1971-1979} (not just shared \code{bench} state).}
+\item{country_comparison}{Named list from \code{\link[=mod_country_comparison_server]{mod_country_comparison_server()}};
+\code{high_group()} reads its \code{custom_df_bar()}.}
 }
 \value{
-NULL; called for its side effects.
+\code{NULL}, invisibly. Called for its side effects (registers the picker
+observers, the \code{scatter} output and the CSV download handler on \code{session}).
 }
 \description{
-bivariate correlation module server
+Keeps the tab's pickers in sync with the Country Benchmarking tab, derives
+the "highlight group" of countries, and renders the scatter (\code{output$scatter})
+via \code{\link[=static_scatter]{static_scatter()}} piped into \code{\link[=interactive_scatter]{interactive_scatter()}}; also serves the
+plotted-data CSV download.
+}
+\details{
+\strong{Cross-module contract.} Reads \code{bench$country()}, \code{bench$base_country()},
+\code{bench$countries()}, \code{bench$custom_grps_df()} and \code{bench$select_trigger()}
+from the \code{\link[=mod_benchmark_server]{mod_benchmark_server()}} list. It \emph{also} takes \code{country_comparison}
+-- the list from \code{\link[=mod_country_comparison_server]{mod_country_comparison_server()}} -- because its
+\code{high_group()} reactive reads that tab's \code{custom_df_bar()} directly (a real
+cross-module dependency, \code{server.R:1971-1979}, not just shared \code{bench}
+state). Exposes nothing back.
+}
+\seealso{
+\code{\link[=mod_bivariate_ui]{mod_bivariate_ui()}}, \code{\link[=static_scatter]{static_scatter()}}, \code{\link[=interactive_scatter]{interactive_scatter()}},
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}, \code{\link[=mod_country_comparison_server]{mod_country_comparison_server()}}.
 }

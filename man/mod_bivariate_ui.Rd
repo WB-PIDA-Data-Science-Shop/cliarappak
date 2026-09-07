@@ -2,18 +2,26 @@
 % Please edit documentation in R/mod_bivariate.R
 \name{mod_bivariate_ui}
 \alias{mod_bivariate_ui}
-\title{bivariate correlation module UI}
+\title{Bivariate Correlation module UI}
 \usage{
 mod_bivariate_ui(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_bivariate_server]{mod_bivariate_server()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$countries}, \verb{$y_scatter_choices}, \verb{$plot_height}.}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-bivariate correlation module UI
+The Bivariate Correlation tab: pick two indicators (x and y; either may be
+"Log GDP per capita, PPP"), a base country and comparison countries, and see
+a scatter of every country's closeness-to-frontier on the two indicators with
+an optional linear fit. Controls are a selection \code{bs4Card()}; the plot is a
+\code{plotlyOutput()}.
+}
+\seealso{
+\code{\link[=mod_bivariate_server]{mod_bivariate_server()}}, \code{\link[=static_scatter]{static_scatter()}}, \code{\link[=x_scatter_choices]{x_scatter_choices()}}.
 }

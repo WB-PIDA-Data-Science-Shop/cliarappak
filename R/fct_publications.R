@@ -1,28 +1,26 @@
-#' pub_function
-#' 
-#' Displays the publication cards. The main div (class = "pubs") contains two divs, 
-#' one that carries the image (class = "pubs_image") and another
-#' that holds the publication metadata (class = "pubs_content"). These details are read from 
-#' the data/publicationsList.xlsx file saved in OneDrive
+#' Build one publication card for the Publications tab
+#'
+#' Returns the HTML for a single publication card: a linked container
+#' (`class = "pubs"`) holding an image block (`class = "pubs_image"`) and a
+#' metadata block (`class = "pubs_content"`) with the title, country, year and
+#' authors. The whole card is an anchor that opens `link` in a new tab.
+#'
+#' @details
+#' The Publications tab calls this once per row of `data/publicationsList.xlsx`
+#' (maintained in OneDrive and copied into `inst/app/data/` for each release).
+#' Styling for the `.pubs*` classes lives in [mod_publications_ui()].
 #'
 #' @param image Path or URL to the publication's card image.
-#' @param link URL the card links to.
+#' @param link URL the card links to (opened in a new tab).
 #' @param title Publication title.
 #' @param country Country the publication covers.
 #' @param year Publication year.
 #' @param authors Publication authors.
 #'
-#' @return A `shiny.tag` publication card, linked to `link`.
+#' @return A `shiny.tag` (`<a>`) publication card, linked to `link`.
+#'
+#' @seealso [mod_publications_ui()], [mod_publications_server()].
 #' @export
-
-## Load the file that contains publications metadata
-
-## Note: Please pick the publicationsList.xlsx file from data/publicationsList.xlsx in 
-## OneDrive and paste it in app/data/ to always get the latest list of publications
-
-# pubList <- readxl::read_excel("data/publicationsList.xlsx")
-
-## Function that displays the publications as cards
 pub_function <- function(image,
                          link,
                          title,

@@ -1,9 +1,19 @@
-#' methodology module UI
+#' Methodology & User Guide module UI
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' The "Methodology & User Guide" tab: the downloadable user guide, an
+#' explanation of the institutional families and the closeness-to-frontier
+#' methodology, citation information, and a button to download the full
+#' indicator definitions as CSV. The download buttons are served by
+#' [mod_methodology_server()].
 #'
-#' @return a `tagList` of UI elements
+#' @param id Character. The module id; must match [mod_methodology_server()].
+#' @param app_data Shared data list from [build_app_data()]. Passed for
+#'   parity with the other module UIs; the current layout does not read from
+#'   it.
+#'
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_methodology_server()], [mod_home_ui()].
 #' @export
 mod_methodology_ui <- function(id, app_data) {
   ns <- NS(id)
@@ -132,12 +142,22 @@ mod_methodology_ui <- function(id, app_data) {
   )
 }
 
-#' methodology module server
+#' Methodology & User Guide module server
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' Serves the tab's two downloads: the packaged user-guide `.docx`
+#' (`output$download_user_guide`) and a CSV of every indicator's
+#' name / family / description / source built from `app_data$db_variables`
+#' (`output$download_indicators`). Reads nothing from `bench` -- this tab is
+#' independent of the shared selection state.
 #'
-#' @return NULL; called for its side effects.
+#' @param id Character. The module id; must match [mod_methodology_ui()].
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$db_variables`.
+#'
+#' @return `NULL`, invisibly. Called for its side effects (registers the two
+#'   download handlers on `session`).
+#'
+#' @seealso [mod_methodology_ui()].
 #' @export
 mod_methodology_server <- function(id, app_data) {
   moduleServer(id, function(input, output, session) {

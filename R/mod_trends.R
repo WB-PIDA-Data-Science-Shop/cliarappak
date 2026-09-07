@@ -1,9 +1,27 @@
-#' time trends module UI
+#' Time Trends module UI
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' The Time Trends tab: pick one base country, one indicator, and any number of
+#' comparison groups / individual comparison countries, and see the indicator's
+#' value plotted year by year. Layout is a selection `box()` on top, two
+#' collapsible `bs4Card()`s (individual comparison countries; line colours), and
+#' the `plotlyOutput()` -- the plot only appears once a country and indicator
+#' are chosen (`conditionalPanel`).
 #'
-#' @return a `tagList` of UI elements
+#' @details
+#' This is a pure layout function: all `choices` come from `app_data`
+#' (`countries`, `group_list`, `filtered_variable_list`) and every input is
+#' namespaced with `NS(id)`. The server half, [mod_trends_server()], keeps the
+#' country/group pickers in sync with the Country Benchmarking tab and does the
+#' data work.
+#'
+#' @param id Character. The module id; must match the id passed to
+#'   [mod_trends_server()].
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$countries`, `$group_list`, `$filtered_variable_list`, `$plot_height`.
+#'
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_trends_server()], [mod_benchmark_ui()].
 #' @export
 mod_trends_ui <- function(id, app_data) {
   ns <- NS(id)
@@ -130,13 +148,44 @@ mod_trends_ui <- function(id, app_data) {
   )
 }
 
-#' time trends module server
+#' Time Trends module server
 #'
-#' @param id a unique identifier for this module.
-#' @param bench Named list of reactives returned by [mod_benchmark_server()].
-#' @param app_data Shared data list from [build_app_data()].
+#' Wires up the Time Trends tab: keeps its pickers in step with the shared
+#' selection state owned by the Country Benchmarking tab, narrows the list of
+#' available comparison countries to those with enough data for the chosen
+#' indicator, and renders the time-series plot via [trends_plot()].
 #'
-#' @return NULL; called for its side effects.
+#' @details
+#' **Cross-module contract.** Like every non-benchmark tab, this server reads
+#' the shared selection state through `bench` (the list returned by
+#' [mod_benchmark_server()]). Specifically it uses:
+#'
+#' - `bench$country()` -- the live base-country selection; mirrored into the
+#'   `country_trends` picker on every change.
+#' - `bench$select_trigger()` / `bench$base_country()` / `bench$groups()` --
+#'   the "Apply"-gated selection; on trigger, country and groups are copied over.
+#' - `bench$custom_grps_df()` -- user-defined comparison groups, folded into the
+#'   `group_trends` choices.
+#'
+#' It exposes nothing back to other modules.
+#'
+#' **Internal reactives.** `custom_df_trend()` subsets `bench$custom_grps_df()`
+#' to the custom groups actually selected here; `filtered_countries_trends()`
+#' returns the comparison countries that have data spanning the base country's
+#' observed year range for the chosen indicator (via [trends_check_data()]).
+#'
+#' @param id Character. The module id; must match [mod_trends_ui()].
+#' @param bench Named list of reactives from [mod_benchmark_server()] -- see
+#'   Details for the elements consumed.
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$countries`, `$group_list`, `$db_variables`, `$raw_data`, `$country_list`.
+#'
+#' @return `NULL`, invisibly. Called for its side effects: registers the
+#'   `country_trends` / `group_trends` / `countries_trends` observers and the
+#'   `time_series` plotly output on `session`.
+#'
+#' @seealso [mod_trends_ui()], [mod_benchmark_server()], [trends_plot()],
+#'   [trends_check_data()].
 #' @export
 mod_trends_server <- function(id, bench, app_data) {
   moduleServer(id, function(input, output, session) {

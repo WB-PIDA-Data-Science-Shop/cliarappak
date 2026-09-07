@@ -2,17 +2,19 @@
 % Please edit documentation in R/fct_helpers.R
 \name{user_data_dir}
 \alias{user_data_dir}
-\title{Construct user app data directory path}
+\title{Path to the CLIAR user data directory}
 \usage{
 user_data_dir()
 }
 \value{
-Character. Path to user's app data directory
+Character scalar. The absolute path to the user's app data
+directory (not guaranteed to exist yet).
 }
 \description{
-Consists of three pieces of information:
-\itemize{
-\item System location
-\item name
+The per-user, per-OS directory where the app persists a saved selection
+(\code{cliar_inputs.rds}). A thin wrapper around
+\code{\link[rappdirs:user_data_dir]{rappdirs::user_data_dir()}} with \code{appname = "CLIAR"}.
 }
+\seealso{
+\code{\link[=check_input_file_exists]{check_input_file_exists()}}.
 }

@@ -9,7 +9,12 @@ useBs4Dash(...)
 \arguments{
 \item{...}{Not used.}
 }
+\value{
+A \verb{<div>} with the \code{bs4Dash} HTML dependencies attached.
+}
 \description{
 Allow to use functions from 'bs4Dash' into a classic 'shiny' app,
-specifically \code{bs4ValueBox}, \code{bs4InfoBox} and \code{bs4Card}.
+specifically \code{bs4ValueBox}, \code{bs4InfoBox} and \code{bs4Card}. Attaches the
+\code{bs4Dash} HTML dependencies to an empty \code{div} so they load even when the
+page is not a \code{bs4Dash::bs4DashPage()}.
 }

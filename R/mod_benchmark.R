@@ -1,13 +1,21 @@
-#' benchmark module UI
+#' Country Benchmarking module UI
 #'
-#' Country benchmarking tab. Owns almost all of the shared selection state
-#' (base country, comparison countries/groups, custom groups, family,
-#' thresholds) that every other tab reads -- see [mod_benchmark_server()].
+#' The Country Benchmarking tab -- the app's primary view and the owner of
+#' almost all the shared selection state (base country, comparison
+#' countries/groups, custom groups, family, thresholds, rank/dots/median
+#' options) that every other tab reads back through the list returned by
+#' [mod_benchmark_server()]. Also hosts the guided tour, the save/load-selection
+#' buttons ([buttons_func()]) and the download buttons that
+#' [mod_reports_server()] renders into.
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' @param id Character. The module id; must match [mod_benchmark_server()].
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$countries`, `$flags_with_countries`, `$group_list`, `$variable_list`,
+#'   `$plot_height`, ...
 #'
-#' @return a `tagList` of UI elements
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_benchmark_server()], [mod_reports_server()], [static_plot()].
 #' @export
 mod_benchmark_ui <- function(id, app_data) {
   ns <- NS(id)
@@ -613,12 +621,16 @@ mod_benchmark_ui <- function(id, app_data) {
   )
 }
 
-#' benchmark module server
+#' Country Benchmarking module server
 #'
 #' Owns the country/comparison-group/family/threshold selection state that
-#' every other tab in the app reads. Returns a named list of reactives (the
-#' "bench" list) that consuming modules pull from instead of reaching for a
-#' shared top-level `server()` scope the way the original `cliarapp` did.
+#' every other tab in the app reads. Renders the benchmarking plot
+#' (`output$plot`) via [def_quantiles()] / [family_data()] /
+#' [compute_family_average_app()] into [static_plot()] / [static_plot_dyn()],
+#' the plot notes ([plot_notes_function()]), the definitions table, and the
+#' save/load-selection handlers. Returns a named list of reactives (the "bench"
+#' list) that consuming modules pull from instead of reaching for a shared
+#' top-level `server()` scope the way the original `cliarapp` did.
 #'
 #' Three deliberate departures from a literal line-by-line port of
 #' `server.R:47-350,353-980,984-1250,1325-1655,2870-2880,2959-3095`, each
@@ -641,10 +653,33 @@ mod_benchmark_ui <- function(id, app_data) {
 #' `select_trigger` and `custom_df` so each consuming module can replicate
 #' the sync itself, watching this module's state instead of owning it.
 #'
-#' @param id a unique identifier for this module.
+#' @param id Character. The module id; must match [mod_benchmark_ui()] (and the
+#'   id [mod_reports_server()] is mounted on).
 #' @param app_data Shared data list from [build_app_data()].
 #'
-#' @return A named list of reactives read by every other module.
+#' @return A named list of reactives (the "bench" list) read by every other
+#'   module server:
+#'   \describe{
+#'     \item{`base_country`}{Apply-gated base-country selection (waits for the
+#'       "Apply selection" button).}
+#'     \item{`country`}{live, ungated `input$country` -- used by other tabs for
+#'       immediate picker sync.}
+#'     \item{`select_trigger`}{`input$select`; fires when "Apply selection" is
+#'       clicked.}
+#'     \item{`countries`, `groups`, `family`, `threshold`, `rank`,
+#'       `benchmark_dots`, `preset_order`, `benchmark_median`,
+#'       `create_custom_grps`}{the corresponding inputs, as reactives.}
+#'     \item{`custom_grps_df`}{the raw user-entered custom-group
+#'       Category/Grp/Countries table.}
+#'     \item{`custom_df`}{`custom_grps_df` filtered to the benchmark plot's own
+#'       group-median selection.}
+#'     \item{`data_avg`, `data`, `data_dyn_avg`, `data_dyn`, `data_family`,
+#'       `data_family_dyn`}{the computed benchmarking datasets (static/dynamic,
+#'       indicator/family level) reused by [mod_reports_server()].}
+#'   }
+#'
+#' @seealso [mod_benchmark_ui()], [mod_reports_server()], [def_quantiles()],
+#'   [static_plot()].
 #' @export
 mod_benchmark_server <- function(id, app_data) {
   moduleServer(id, function(input, output, session) {

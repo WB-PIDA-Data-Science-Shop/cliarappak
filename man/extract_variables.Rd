@@ -2,16 +2,35 @@
 % Please edit documentation in R/fct_extract_var.R
 \name{extract_variables}
 \alias{extract_variables}
-\title{Indicator variable names for a given family}
+\alias{extract_variables_benchmarked}
+\title{Indicator display names for a given institutional family}
 \usage{
 extract_variables(x, db_variables)
+
+extract_variables_benchmarked(x, db_variables)
 }
 \arguments{
-\item{x}{Family name to filter on.}
+\item{x}{Character. The family name to filter on (matched against
+\code{db_variables$family_name}).}
 
-\item{db_variables}{Indicator metadata table (replaces the implicit global
-used by the original \code{cliarapp} version).}
+\item{db_variables}{Indicator metadata table -- \code{app_data$db_variables}, or
+\code{cliaretl::db_variables_final}.}
+}
+\value{
+A character vector of indicator display names (\code{var_name}) in family
+\code{x}. Empty if the family has no matching rows.
 }
 \description{
-Indicator variable names for a given family
+\code{extract_variables()} returns every indicator's display name (\code{var_name}) in
+one institutional family; \code{extract_variables_benchmarked()} returns only the
+subset flagged \code{benchmarked_ctf == "Yes"}. Both are used by
+\code{\link[=build_app_data]{build_app_data()}} to build the per-family choice lists behind the tab
+pickers.
+}
+\details{
+These replace the \code{cliarapp} script-app versions that read an implicit global
+\code{db_variables}; here the metadata table is passed in explicitly.
+}
+\seealso{
+\code{\link[=build_app_data]{build_app_data()}}, \code{\link[=x_scatter_choices]{x_scatter_choices()}}.
 }

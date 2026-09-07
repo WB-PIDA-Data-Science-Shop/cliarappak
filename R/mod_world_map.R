@@ -1,9 +1,16 @@
-#' world map module UI
+#' World Map module UI
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' The World Map tab: pick an indicator and a value type (latest value vs
+#' closeness-to-frontier), and see a choropleth of every country with data.
+#' Controls are a selection `box()`; the map itself is a `plotlyOutput()`.
 #'
-#' @return a `tagList` of UI elements
+#' @param id Character. The module id; must match [mod_world_map_server()].
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$variable_list` for the indicator picker.
+#'
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_world_map_server()], [static_map()].
 #' @export
 mod_world_map_ui <- function(id, app_data) {
   ns <- NS(id)
@@ -83,13 +90,29 @@ mod_world_map_ui <- function(id, app_data) {
   )
 }
 
-#' world map module server
+#' World Map module server
 #'
-#' @param id a unique identifier for this module.
-#' @param bench Named list of reactives returned by [mod_benchmark_server()].
-#' @param app_data Shared data list from [build_app_data()].
+#' Renders the choropleth (`output$map`) via [static_map()] piped into
+#' [interactive_map()], and disables the "closeness to frontier" value option
+#' when a family-average indicator is selected (there is no CTF for those).
+#' Shows a "Map is not available" message via [check_spatial_data()] when the
+#' indicator has no data anywhere.
 #'
-#' @return NULL; called for its side effects.
+#' @details
+#' **Cross-module contract.** Reads two elements of `bench` (the list from
+#' [mod_benchmark_server()]): `bench$base_country()` and `bench$countries()`,
+#' both used only to outline those countries on the map. Exposes nothing back.
+#'
+#' @param id Character. The module id; must match [mod_world_map_ui()].
+#' @param bench Named list of reactives from [mod_benchmark_server()] -- uses
+#'   `$base_country()` and `$countries()`.
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$spatial_data`, `$db_variables`, `$variable_names`.
+#'
+#' @return `NULL`, invisibly. Called for its side effects (registers the
+#'   `value_map` observer and the `map` plotly output on `session`).
+#'
+#' @seealso [mod_world_map_ui()], [static_map()], [check_spatial_data()].
 #' @export
 mod_world_map_server <- function(id, bench, app_data) {
   moduleServer(id, function(input, output, session) {

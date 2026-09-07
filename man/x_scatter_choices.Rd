@@ -2,19 +2,34 @@
 % Please edit documentation in R/fct_helpers.R
 \name{x_scatter_choices}
 \alias{x_scatter_choices}
-\title{This function establishes x_axis variable choices}
+\title{X-axis indicator choices for the Bivariate Correlation tab}
 \usage{
 x_scatter_choices(yvar, db_variables, family_names)
 }
 \arguments{
-\item{yvar}{Selected y-axis variable name to exclude from x-axis choices.}
+\item{yvar}{Character. The selected y-axis indicator display name, excluded
+from every family's list.}
 
-\item{db_variables}{Indicator metadata table (replaces the implicit global
-used by the original \code{cliarapp} version).}
+\item{db_variables}{Indicator metadata table (\code{app_data$db_variables}).}
 
-\item{family_names}{Data frame of family variable/name pairs (replaces the
-implicit global used by the original \code{cliarapp} version).}
+\item{family_names}{Data frame of family \code{variable} / \code{var_name} pairs
+(\code{app_data$family_names}).}
+}
+\value{
+A named list suitable for \code{shinyWidgets::pickerInput(choices = )}:
+one element per family (a character vector of indicator names), plus a
+leading \code{"Log GDP per capita, PPP"} entry.
 }
 \description{
-This function establishes x_axis variable choices
+Builds the grouped choice list for the scatter plot's x-axis picker: every
+indicator, organised by institutional family, with the currently selected
+y-axis indicator removed so a user cannot plot an indicator against itself.
+\code{"Log GDP per capita, PPP"} is prepended as an ungrouped first choice.
+}
+\details{
+Replaces the \code{cliarapp} script-app version that read implicit \code{db_variables}
+and \code{family_names} globals; both are now passed in.
+}
+\seealso{
+\code{\link[=static_scatter]{static_scatter()}}, \code{\link[=mod_bivariate_ui]{mod_bivariate_ui()}}.
 }

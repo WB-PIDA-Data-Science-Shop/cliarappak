@@ -2,18 +2,27 @@
 % Please edit documentation in R/mod_methodology.R
 \name{mod_methodology_server}
 \alias{mod_methodology_server}
-\title{methodology module server}
+\title{Methodology & User Guide module server}
 \usage{
 mod_methodology_server(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_methodology_ui]{mod_methodology_ui()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$db_variables}.}
 }
 \value{
-NULL; called for its side effects.
+\code{NULL}, invisibly. Called for its side effects (registers the two
+download handlers on \code{session}).
 }
 \description{
-methodology module server
+Serves the tab's two downloads: the packaged user-guide \code{.docx}
+(\code{output$download_user_guide}) and a CSV of every indicator's
+name / family / description / source built from \code{app_data$db_variables}
+(\code{output$download_indicators}). Reads nothing from \code{bench} -- this tab is
+independent of the shared selection state.
+}
+\seealso{
+\code{\link[=mod_methodology_ui]{mod_methodology_ui()}}.
 }

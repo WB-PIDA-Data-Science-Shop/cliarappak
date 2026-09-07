@@ -7,11 +7,16 @@
 mod_faq_ui(id)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id (namespacing only; no inputs are read).}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-Static content only -- no server logic.
+The FAQ tab: a stack of collapsible \code{box()}es, each a question and answer
+about the CLIAR Benchmarking. Static content only -- there is no
+\code{mod_faq_server()}.
+}
+\seealso{
+\code{\link[=mod_home_ui]{mod_home_ui()}}, \code{\link[=mod_methodology_ui]{mod_methodology_ui()}}.
 }

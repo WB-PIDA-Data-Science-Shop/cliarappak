@@ -2,23 +2,47 @@
 % Please edit documentation in R/mod_benchmark.R
 \name{mod_benchmark_server}
 \alias{mod_benchmark_server}
-\title{benchmark module server}
+\title{Country Benchmarking module server}
 \usage{
 mod_benchmark_server(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_benchmark_ui]{mod_benchmark_ui()}} (and the
+id \code{\link[=mod_reports_server]{mod_reports_server()}} is mounted on).}
 
 \item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
 }
 \value{
-A named list of reactives read by every other module.
+A named list of reactives (the "bench" list) read by every other
+module server:
+\describe{
+\item{\code{base_country}}{Apply-gated base-country selection (waits for the
+"Apply selection" button).}
+\item{\code{country}}{live, ungated \code{input$country} -- used by other tabs for
+immediate picker sync.}
+\item{\code{select_trigger}}{\code{input$select}; fires when "Apply selection" is
+clicked.}
+\item{\code{countries}, \code{groups}, \code{family}, \code{threshold}, \code{rank},
+\code{benchmark_dots}, \code{preset_order}, \code{benchmark_median},
+\code{create_custom_grps}}{the corresponding inputs, as reactives.}
+\item{\code{custom_grps_df}}{the raw user-entered custom-group
+Category/Grp/Countries table.}
+\item{\code{custom_df}}{\code{custom_grps_df} filtered to the benchmark plot's own
+group-median selection.}
+\item{\code{data_avg}, \code{data}, \code{data_dyn_avg}, \code{data_dyn}, \code{data_family},
+\code{data_family_dyn}}{the computed benchmarking datasets (static/dynamic,
+indicator/family level) reused by \code{\link[=mod_reports_server]{mod_reports_server()}}.}
+}
 }
 \description{
 Owns the country/comparison-group/family/threshold selection state that
-every other tab in the app reads. Returns a named list of reactives (the
-"bench" list) that consuming modules pull from instead of reaching for a
-shared top-level \code{server()} scope the way the original \code{cliarapp} did.
+every other tab in the app reads. Renders the benchmarking plot
+(\code{output$plot}) via \code{\link[=def_quantiles]{def_quantiles()}} / \code{\link[=family_data]{family_data()}} /
+\code{\link[=compute_family_average_app]{compute_family_average_app()}} into \code{\link[=static_plot]{static_plot()}} / \code{\link[=static_plot_dyn]{static_plot_dyn()}},
+the plot notes (\code{\link[=plot_notes_function]{plot_notes_function()}}), the definitions table, and the
+save/load-selection handlers. Returns a named list of reactives (the "bench"
+list) that consuming modules pull from instead of reaching for a shared
+top-level \code{server()} scope the way the original \code{cliarapp} did.
 }
 \details{
 Three deliberate departures from a literal line-by-line port of
@@ -43,4 +67,8 @@ custom groups change) is NOT done here -- it can't be, \code{mod_benchmark}
 has no access to other modules' namespaced inputs. Instead this returns
 \code{select_trigger} and \code{custom_df} so each consuming module can replicate
 the sync itself, watching this module's state instead of owning it.
+}
+\seealso{
+\code{\link[=mod_benchmark_ui]{mod_benchmark_ui()}}, \code{\link[=mod_reports_server]{mod_reports_server()}}, \code{\link[=def_quantiles]{def_quantiles()}},
+\code{\link[=static_plot]{static_plot()}}.
 }

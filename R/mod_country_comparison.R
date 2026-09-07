@@ -1,11 +1,17 @@
-#' country comparison module UI
+#' Cross-Country Comparison module UI
 #'
-#' Cross-Country Comparison tab (bar chart).
+#' The Cross-Country Comparison tab: pick one indicator, a base country,
+#' comparison countries and comparison groups, and see a horizontal bar chart of
+#' each one's closeness-to-frontier (plus a comparison-countries median bar).
+#' Controls are a selection `bs4Card()`; the chart is a `plotlyOutput()`.
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' @param id Character. The module id; must match [mod_country_comparison_server()].
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$countries`, `$group_list`, `$variable_list`, `$plot_height`.
 #'
-#' @return a `tagList` of UI elements
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_country_comparison_server()], [static_bar()].
 #' @export
 mod_country_comparison_ui <- function(id, app_data) {
   ns <- NS(id)
@@ -143,13 +149,33 @@ mod_country_comparison_ui <- function(id, app_data) {
   )
 }
 
-#' country comparison module server
+#' Cross-Country Comparison module server
 #'
-#' @param id a unique identifier for this module.
-#' @param bench Named list of reactives returned by [mod_benchmark_server()].
-#' @param app_data Shared data list from [build_app_data()].
+#' Keeps the tab's pickers in sync with the Country Benchmarking tab, resolves
+#' any custom comparison groups, and renders the bar chart (`output$bar`) via
+#' [static_bar()] piped into [interactive_bar()].
 #'
-#' @return NULL; called for its side effects.
+#' @details
+#' **Cross-module contract.** Reads `bench$country()`, `bench$base_country()`,
+#' `bench$groups()`, `bench$custom_grps_df()` and `bench$select_trigger()` from
+#' the [mod_benchmark_server()] list. Returns its own `custom_df_bar` reactive
+#' so that [mod_bivariate_server()] can build its highlight group from it -- a
+#' genuine cross-module dependency (`server.R:1971-1979`), threaded through
+#' `app_server()`.
+#'
+#' @param id Character. The module id; must match [mod_country_comparison_ui()].
+#' @param bench Named list of reactives from [mod_benchmark_server()] -- see
+#'   Details.
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$global_data`, `$variable_names`, `$db_variables`, `$ctf_long_dyn`.
+#'
+#' @return A named list with one element, `custom_df_bar` (a reactive holding
+#'   this tab's selected custom-group table, or `NULL`), consumed by
+#'   [mod_bivariate_server()]. Also registers the picker observers, the `bar`
+#'   output and the definition table on `session`.
+#'
+#' @seealso [mod_country_comparison_ui()], [static_bar()], [interactive_bar()],
+#'   [mod_benchmark_server()], [mod_bivariate_server()].
 #' @export
 mod_country_comparison_server <- function(id, bench, app_data) {
   moduleServer(id, function(input, output, session) {

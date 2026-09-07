@@ -1,10 +1,14 @@
-#' terms of use module UI
+#' Terms of Use module UI
 #'
-#' Static content only -- no server logic.
+#' The "Terms of use and Disclaimers" tab: a single card with the citation
+#' request and the standard World Bank disclaimer. Static content only -- there
+#' is no `mod_terms_server()`.
 #'
-#' @param id a unique identifier for this module.
+#' @param id Character. The module id (namespacing only; no inputs are read).
 #'
-#' @return a `tagList` of UI elements
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_faq_ui()], [mod_methodology_ui()].
 #' @export
 mod_terms_ui <- function(id) {
   ns <- NS(id)

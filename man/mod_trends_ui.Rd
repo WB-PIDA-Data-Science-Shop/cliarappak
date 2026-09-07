@@ -2,18 +2,35 @@
 % Please edit documentation in R/mod_trends.R
 \name{mod_trends_ui}
 \alias{mod_trends_ui}
-\title{time trends module UI}
+\title{Time Trends module UI}
 \usage{
 mod_trends_ui(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match the id passed to
+\code{\link[=mod_trends_server]{mod_trends_server()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$countries}, \verb{$group_list}, \verb{$filtered_variable_list}, \verb{$plot_height}.}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-time trends module UI
+The Time Trends tab: pick one base country, one indicator, and any number of
+comparison groups / individual comparison countries, and see the indicator's
+value plotted year by year. Layout is a selection \code{box()} on top, two
+collapsible \code{bs4Card()}s (individual comparison countries; line colours), and
+the \code{plotlyOutput()} -- the plot only appears once a country and indicator
+are chosen (\code{conditionalPanel}).
+}
+\details{
+This is a pure layout function: all \code{choices} come from \code{app_data}
+(\code{countries}, \code{group_list}, \code{filtered_variable_list}) and every input is
+namespaced with \code{NS(id)}. The server half, \code{\link[=mod_trends_server]{mod_trends_server()}}, keeps the
+country/group pickers in sync with the Country Benchmarking tab and does the
+data work.
+}
+\seealso{
+\code{\link[=mod_trends_server]{mod_trends_server()}}, \code{\link[=mod_benchmark_ui]{mod_benchmark_ui()}}.
 }

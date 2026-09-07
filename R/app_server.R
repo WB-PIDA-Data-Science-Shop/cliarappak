@@ -1,3 +1,23 @@
+#' Top-level app server
+#'
+#' Wires the module servers together. Retrieves the shared data list via
+#' `golem::get_golem_options("app_data")`, starts [mod_benchmark_server()] first
+#' (it owns the shared selection state, returned as `bench`), then passes
+#' `bench` -- and, for the scatter tab, `country_comparison` -- into every other
+#' module server.
+#'
+#' @details
+#' `observe_helpers()` (shinyhelper) is called here at the root session, not in
+#' a module, because its click JS signals the unnamespaced root session. The
+#' Reports server is deliberately mounted on the `"benchmark"` id so its
+#' download handlers render into buttons defined by [mod_benchmark_ui()].
+#'
+#' @param input,output,session Standard Shiny server arguments.
+#'
+#' @return `NULL`, invisibly.
+#'
+#' @seealso `app_ui()`, [run_app()], [mod_benchmark_server()].
+#' @noRd
 app_server <- function(input, output, session) {
   app_data <- golem::get_golem_options("app_data")
 

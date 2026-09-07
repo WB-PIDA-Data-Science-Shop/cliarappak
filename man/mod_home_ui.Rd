@@ -2,16 +2,21 @@
 % Please edit documentation in R/mod_home.R
 \name{mod_home_ui}
 \alias{mod_home_ui}
-\title{home module UI}
+\title{Home module UI}
 \usage{
 mod_home_ui(id)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id (namespacing only; no inputs are read).}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-Landing page. Static content only -- no server logic.
+The landing page: a welcome card describing the CLIAR Benchmarking Dashboard
+and a short "How to use this dashboard" guide to the tabs. Static content
+only -- there is no \code{mod_home_server()}.
+}
+\seealso{
+\code{\link[=mod_methodology_ui]{mod_methodology_ui()}}, \code{\link[=mod_faq_ui]{mod_faq_ui()}}.
 }

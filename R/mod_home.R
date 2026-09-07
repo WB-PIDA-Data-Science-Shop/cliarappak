@@ -1,10 +1,14 @@
-#' home module UI
+#' Home module UI
 #'
-#' Landing page. Static content only -- no server logic.
+#' The landing page: a welcome card describing the CLIAR Benchmarking Dashboard
+#' and a short "How to use this dashboard" guide to the tabs. Static content
+#' only -- there is no `mod_home_server()`.
 #'
-#' @param id a unique identifier for this module.
+#' @param id Character. The module id (namespacing only; no inputs are read).
 #'
-#' @return a `tagList` of UI elements
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_methodology_ui()], [mod_faq_ui()].
 #' @export
 mod_home_ui <- function(id) {
   ns <- NS(id)

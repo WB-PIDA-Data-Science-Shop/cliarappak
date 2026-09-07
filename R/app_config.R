@@ -6,6 +6,8 @@
 #' @param ... character vectors, specifying subdirectory and file(s)
 #' within your package. The default, none, returns the root of the app.
 #'
+#' @return Character path from [system.file()] (`""` if not found).
+#'
 #' @noRd
 app_sys <- function(...) {
   system.file(..., package = "cliarappak")
@@ -17,6 +19,8 @@ app_sys <- function(...) {
 #' @param config GOLEM_CONFIG_ACTIVE value. If unset, R_CONFIG_ACTIVE.
 #' If unset, "default".
 #' @param use_parent Logical, scan the parent directory for config file.
+#'
+#' @return The requested config value.
 #'
 #' @noRd
 get_golem_config <- function(

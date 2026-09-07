@@ -2,18 +2,25 @@
 % Please edit documentation in R/mod_country_comparison.R
 \name{mod_country_comparison_ui}
 \alias{mod_country_comparison_ui}
-\title{country comparison module UI}
+\title{Cross-Country Comparison module UI}
 \usage{
 mod_country_comparison_ui(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_country_comparison_server]{mod_country_comparison_server()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$countries}, \verb{$group_list}, \verb{$variable_list}, \verb{$plot_height}.}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-Cross-Country Comparison tab (bar chart).
+The Cross-Country Comparison tab: pick one indicator, a base country,
+comparison countries and comparison groups, and see a horizontal bar chart of
+each one's closeness-to-frontier (plus a comparison-countries median bar).
+Controls are a selection \code{bs4Card()}; the chart is a \code{plotlyOutput()}.
+}
+\seealso{
+\code{\link[=mod_country_comparison_server]{mod_country_comparison_server()}}, \code{\link[=static_bar]{static_bar()}}.
 }

@@ -2,14 +2,14 @@
 % Please edit documentation in R/fct_publications.R
 \name{pub_function}
 \alias{pub_function}
-\title{pub_function}
+\title{Build one publication card for the Publications tab}
 \usage{
 pub_function(image, link, title, country, year, authors)
 }
 \arguments{
 \item{image}{Path or URL to the publication's card image.}
 
-\item{link}{URL the card links to.}
+\item{link}{URL the card links to (opened in a new tab).}
 
 \item{title}{Publication title.}
 
@@ -20,11 +20,19 @@ pub_function(image, link, title, country, year, authors)
 \item{authors}{Publication authors.}
 }
 \value{
-A \code{shiny.tag} publication card, linked to \code{link}.
+A \code{shiny.tag} (\verb{<a>}) publication card, linked to \code{link}.
 }
 \description{
-Displays the publication cards. The main div (class = "pubs") contains two divs,
-one that carries the image (class = "pubs_image") and another
-that holds the publication metadata (class = "pubs_content"). These details are read from
-the data/publicationsList.xlsx file saved in OneDrive
+Returns the HTML for a single publication card: a linked container
+(\code{class = "pubs"}) holding an image block (\code{class = "pubs_image"}) and a
+metadata block (\code{class = "pubs_content"}) with the title, country, year and
+authors. The whole card is an anchor that opens \code{link} in a new tab.
+}
+\details{
+The Publications tab calls this once per row of \code{data/publicationsList.xlsx}
+(maintained in OneDrive and copied into \verb{inst/app/data/} for each release).
+Styling for the \verb{.pubs*} classes lives in \code{\link[=mod_publications_ui]{mod_publications_ui()}}.
+}
+\seealso{
+\code{\link[=mod_publications_ui]{mod_publications_ui()}}, \code{\link[=mod_publications_server]{mod_publications_server()}}.
 }

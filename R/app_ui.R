@@ -1,3 +1,17 @@
+#' Top-level app UI
+#'
+#' Assembles the whole dashboard: the `bs4Dash::dashboardPage()` shell (header,
+#' sidebar menu, body) and one `tabItem()` per module UI. Retrieves the shared
+#' data list via `golem::get_golem_options("app_data")` -- put there by
+#' [run_app()] -- and threads the pieces each module UI needs into its call.
+#'
+#' @param request Internal. The Shiny request object (required signature for a
+#'   golem `app_ui`; unused here).
+#'
+#' @return A `shiny::tagList` -- the complete page UI.
+#'
+#' @seealso [run_app()], `app_server()`, [build_app_data()].
+#' @noRd
 app_ui <- function(request) {
   app_data <- golem::get_golem_options("app_data")
 
@@ -60,6 +74,16 @@ app_ui <- function(request) {
   )
 }
 
+#' Register the app's static web resources
+#'
+#' golem boilerplate: mounts `inst/app/www` at the `www/` URL path and adds the
+#' favicon, the bundled resources, and `styles.css` to `<head>`. Called once
+#' from `app_ui()`.
+#'
+#' @return A `tags$head()` fragment (with the resource path registered as a
+#'   side effect).
+#'
+#' @noRd
 golem_add_external_resources <- function() {
   add_resource_path("www", app_sys("app/www"))
   tags$head(

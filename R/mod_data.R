@@ -1,11 +1,17 @@
-#' data module UI
+#' Data module UI
 #'
-#' Data tab: bulk CSV/rds/dta downloads plus an interactive, filterable table.
+#' The Data tab: a card of bulk download buttons (closeness-to-frontier and raw
+#' indicators, static and dynamic, cluster-level or all indicators, in CSV / RDS
+#' / DTA) plus an interactive, filterable [DT::datatable()] with its own
+#' format picker and a "descriptive names vs codes" toggle.
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' @param id Character. The module id; must match [mod_data_server()].
+#' @param app_data Shared data list from [build_app_data()]. Used to populate
+#'   the table filters (`$countries`, `$variable_list`, ...).
 #'
-#' @return a `tagList` of UI elements
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_data_server()], [dta_prep()], [rds_prep()], [csv_prep()].
 #' @export
 mod_data_ui <- function(id, app_data) {
   ns <- NS(id)
@@ -301,13 +307,32 @@ mod_data_ui <- function(id, app_data) {
   )
 }
 
-#' data module server
+#' Data module server
 #'
-#' @param id a unique identifier for this module.
-#' @param bench Named list of reactives returned by [mod_benchmark_server()].
-#' @param app_data Shared data list from [build_app_data()].
+#' Backs the Data tab: keeps the table's country / group / indicator filters in
+#' sync with the Country Benchmarking tab, builds the filtered table, and serves
+#' every download button (running the rows through [dta_prep()] / [rds_prep()] /
+#' [csv_prep()] according to the chosen format and the descriptive-names
+#' toggle).
 #'
-#' @return NULL; called for its side effects.
+#' @details
+#' **Cross-module contract.** Reads `bench$country()`, `bench$groups()`,
+#' `bench$countries()` and `bench$select_trigger()` from the
+#' [mod_benchmark_server()] list -- the first three drive live (ungated) picker
+#' sync, matching the original app. Exposes nothing back.
+#'
+#' @param id Character. The module id; must match [mod_data_ui()].
+#' @param bench Named list of reactives from [mod_benchmark_server()] -- uses
+#'   `$country()`, `$groups()`, `$countries()`, `$select_trigger()`.
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$global_data`, `$global_data_dyn`, `$raw_data`, `$db_variables`,
+#'   `$variable_names` and the filter vocabularies.
+#'
+#' @return `NULL`, invisibly. Called for its side effects (registers the picker
+#'   observers, the `table` output and all download handlers on `session`).
+#'
+#' @seealso [mod_data_ui()], [dta_prep()], [rds_prep()], [csv_prep()],
+#'   [mod_benchmark_server()].
 #' @export
 mod_data_server <- function(id, bench, app_data) {
   moduleServer(id, function(input, output, session) {

@@ -2,13 +2,17 @@
 % Please edit documentation in R/fct_helpers.R
 \name{check_input_file_exists}
 \alias{check_input_file_exists}
-\title{check_input_file_exists}
+\title{Does the user have a saved CLIAR selection on disk?}
 \usage{
 check_input_file_exists()
 }
 \value{
-Character. Path to user's app data directory
+A single logical.
 }
 \description{
-Check if the input file exists in the user_data_dir() directory
+Checks for \code{cliar_inputs.rds} in \code{\link[=user_data_dir]{user_data_dir()}} -- the file written when a
+user clicks "Save Selection of Countries".
+}
+\seealso{
+\code{\link[=user_data_dir]{user_data_dir()}}.
 }

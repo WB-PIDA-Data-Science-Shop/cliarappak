@@ -1,10 +1,14 @@
 #' FAQ module UI
 #'
-#' Static content only -- no server logic.
+#' The FAQ tab: a stack of collapsible `box()`es, each a question and answer
+#' about the CLIAR Benchmarking. Static content only -- there is no
+#' `mod_faq_server()`.
 #'
-#' @param id a unique identifier for this module.
+#' @param id Character. The module id (namespacing only; no inputs are read).
 #'
-#' @return a `tagList` of UI elements
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_home_ui()], [mod_methodology_ui()].
 #' @export
 mod_faq_ui <- function(id) {
   ns <- NS(id)

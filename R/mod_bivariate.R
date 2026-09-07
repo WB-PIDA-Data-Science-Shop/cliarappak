@@ -1,9 +1,18 @@
-#' bivariate correlation module UI
+#' Bivariate Correlation module UI
 #'
-#' @param id a unique identifier for this module.
-#' @param app_data Shared data list from [build_app_data()].
+#' The Bivariate Correlation tab: pick two indicators (x and y; either may be
+#' "Log GDP per capita, PPP"), a base country and comparison countries, and see
+#' a scatter of every country's closeness-to-frontier on the two indicators with
+#' an optional linear fit. Controls are a selection `bs4Card()`; the plot is a
+#' `plotlyOutput()`.
 #'
-#' @return a `tagList` of UI elements
+#' @param id Character. The module id; must match [mod_bivariate_server()].
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$countries`, `$y_scatter_choices`, `$plot_height`.
+#'
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_bivariate_server()], [static_scatter()], [x_scatter_choices()].
 #' @export
 mod_bivariate_ui <- function(id, app_data) {
   ns <- NS(id)
@@ -154,17 +163,35 @@ mod_bivariate_ui <- function(id, app_data) {
   )
 }
 
-#' bivariate correlation module server
+#' Bivariate Correlation module server
 #'
-#' @param id a unique identifier for this module.
-#' @param bench Named list of reactives returned by [mod_benchmark_server()].
-#' @param app_data Shared data list from [build_app_data()].
-#' @param country_comparison Named list returned by
-#'   [mod_country_comparison_server()] -- `high_group()` below reads its
-#'   `custom_df_bar()`, a genuine cross-module dependency found in
-#'   `server.R:1971-1979` (not just shared `bench` state).
+#' Keeps the tab's pickers in sync with the Country Benchmarking tab, derives
+#' the "highlight group" of countries, and renders the scatter (`output$scatter`)
+#' via [static_scatter()] piped into [interactive_scatter()]; also serves the
+#' plotted-data CSV download.
 #'
-#' @return NULL; called for its side effects.
+#' @details
+#' **Cross-module contract.** Reads `bench$country()`, `bench$base_country()`,
+#' `bench$countries()`, `bench$custom_grps_df()` and `bench$select_trigger()`
+#' from the [mod_benchmark_server()] list. It *also* takes `country_comparison`
+#' -- the list from [mod_country_comparison_server()] -- because its
+#' `high_group()` reactive reads that tab's `custom_df_bar()` directly (a real
+#' cross-module dependency, `server.R:1971-1979`, not just shared `bench`
+#' state). Exposes nothing back.
+#'
+#' @param id Character. The module id; must match [mod_bivariate_ui()].
+#' @param bench Named list of reactives from [mod_benchmark_server()] -- see
+#'   Details.
+#' @param app_data Shared data list from [build_app_data()]. Uses
+#'   `$global_data`, `$variable_names`, `$db_variables`, `$country_list`.
+#' @param country_comparison Named list from [mod_country_comparison_server()];
+#'   `high_group()` reads its `custom_df_bar()`.
+#'
+#' @return `NULL`, invisibly. Called for its side effects (registers the picker
+#'   observers, the `scatter` output and the CSV download handler on `session`).
+#'
+#' @seealso [mod_bivariate_ui()], [static_scatter()], [interactive_scatter()],
+#'   [mod_benchmark_server()], [mod_country_comparison_server()].
 #' @export
 mod_bivariate_server <- function(id, bench, app_data, country_comparison) {
   moduleServer(id, function(input, output, session) {

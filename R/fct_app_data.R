@@ -47,7 +47,34 @@
 #' @param dynamic_year_cutoff Integer year, or `NULL` (default) to derive one
 #'   via [resolve_dynamic_year_cutoff()].
 #'
-#' @return A named list of data objects shared across `cliarappak`'s modules.
+#' @return A named list of the data objects shared across `cliarappak`'s
+#'   modules (the `app_data` argument they all take). Elements:
+#'   \describe{
+#'     \item{`db_variables`}{indicator dictionary, filtered to benchmarked /
+#'       family-level rows.}
+#'     \item{`vars_all`, `vars_family`}{character vectors of indicator and
+#'       family-variable codes.}
+#'     \item{`definitions`}{nested per-family indicator definitions for the
+#'       methodology / definition tables.}
+#'     \item{`raw_data`}{wide indicator panel (`Year` column), 1990+.}
+#'     \item{`global_data`, `global_data_dyn`}{wide closeness-to-frontier
+#'       tables, static and dynamic (dynamic filtered to `dynamic_year_cutoff`).}
+#'     \item{`ctf_long`, `ctf_long_dyn`}{the same, pivoted long.}
+#'     \item{`country_groups`, `country_list`, `family_order`}{`cliaretl`
+#'       metadata tables.}
+#'     \item{`spatial_data`}{`sf` layer for the World Map tab (Robinson
+#'       projection).}
+#'     \item{`family_names`, `variable_names`}{family and indicator name
+#'       lookups.}
+#'     \item{`countries`, `flags_with_countries`}{sorted country names, and the
+#'       same with flag `<img>` markup for the pickers.}
+#'     \item{`variable_list`, `variable_list_benchmarked`,
+#'       `filtered_variable_list`, `y_scatter_choices`}{grouped picker choice
+#'       lists.}
+#'     \item{`group_list`, `all_groups`}{comparison-group choices.}
+#'     \item{`plot_height`}{base plot height in px (500).}
+#'     \item{`dynamic_year_cutoff`}{the resolved cutoff year.}
+#'   }
 #' @export
 build_app_data <- function(dynamic_year_cutoff = NULL) {
   dynamic_year_cutoff <- resolve_dynamic_year_cutoff(dynamic_year_cutoff)

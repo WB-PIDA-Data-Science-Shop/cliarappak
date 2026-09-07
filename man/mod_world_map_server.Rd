@@ -2,20 +2,35 @@
 % Please edit documentation in R/mod_world_map.R
 \name{mod_world_map_server}
 \alias{mod_world_map_server}
-\title{world map module server}
+\title{World Map module server}
 \usage{
 mod_world_map_server(id, bench, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_world_map_ui]{mod_world_map_ui()}}.}
 
-\item{bench}{Named list of reactives returned by \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.}
+\item{bench}{Named list of reactives from \code{\link[=mod_benchmark_server]{mod_benchmark_server()}} -- uses
+\verb{$base_country()} and \verb{$countries()}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$spatial_data}, \verb{$db_variables}, \verb{$variable_names}.}
 }
 \value{
-NULL; called for its side effects.
+\code{NULL}, invisibly. Called for its side effects (registers the
+\code{value_map} observer and the \code{map} plotly output on \code{session}).
 }
 \description{
-world map module server
+Renders the choropleth (\code{output$map}) via \code{\link[=static_map]{static_map()}} piped into
+\code{\link[=interactive_map]{interactive_map()}}, and disables the "closeness to frontier" value option
+when a family-average indicator is selected (there is no CTF for those).
+Shows a "Map is not available" message via \code{\link[=check_spatial_data]{check_spatial_data()}} when the
+indicator has no data anywhere.
+}
+\details{
+\strong{Cross-module contract.} Reads two elements of \code{bench} (the list from
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}): \code{bench$base_country()} and \code{bench$countries()},
+both used only to outline those countries on the map. Exposes nothing back.
+}
+\seealso{
+\code{\link[=mod_world_map_ui]{mod_world_map_ui()}}, \code{\link[=static_map]{static_map()}}, \code{\link[=check_spatial_data]{check_spatial_data()}}.
 }

@@ -2,16 +2,25 @@
 % Please edit documentation in R/mod_publications.R
 \name{mod_publications_server}
 \alias{mod_publications_server}
-\title{publications module server}
+\title{Publications module server}
 \usage{
 mod_publications_server(id)
 }
 \arguments{
-\item{id}{a unique identifier for this module. To be used in the ui and server files}
+\item{id}{Character. The module id; must match \code{\link[=mod_publications_ui]{mod_publications_ui()}}. Note
+\code{app_server()} mounts this on the id \code{"publications"}.}
 }
 \value{
-NULL; called for its side effect of rendering the \code{publications} output.
+\code{NULL}, invisibly. Called for its side effect of rendering the
+\code{publications} output.
 }
 \description{
-publications module server
+Reads the publication list from \code{inst/extdata/publicationsList.xlsx} and
+renders it into \code{output$publications}: one card per unique title, built
+dynamically (the number of titles and of publications per title is not known
+ahead of time) from \code{\link[=pub_function]{pub_function()}}. Independent of \code{bench} / the shared
+selection state.
+}
+\seealso{
+\code{\link[=mod_publications_ui]{mod_publications_ui()}}, \code{\link[=pub_function]{pub_function()}}.
 }

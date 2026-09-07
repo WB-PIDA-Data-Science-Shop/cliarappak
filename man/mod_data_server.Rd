@@ -2,20 +2,38 @@
 % Please edit documentation in R/mod_data.R
 \name{mod_data_server}
 \alias{mod_data_server}
-\title{data module server}
+\title{Data module server}
 \usage{
 mod_data_server(id, bench, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_data_ui]{mod_data_ui()}}.}
 
-\item{bench}{Named list of reactives returned by \code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.}
+\item{bench}{Named list of reactives from \code{\link[=mod_benchmark_server]{mod_benchmark_server()}} -- uses
+\verb{$country()}, \verb{$groups()}, \verb{$countries()}, \verb{$select_trigger()}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Uses
+\verb{$global_data}, \verb{$global_data_dyn}, \verb{$raw_data}, \verb{$db_variables},
+\verb{$variable_names} and the filter vocabularies.}
 }
 \value{
-NULL; called for its side effects.
+\code{NULL}, invisibly. Called for its side effects (registers the picker
+observers, the \code{table} output and all download handlers on \code{session}).
 }
 \description{
-data module server
+Backs the Data tab: keeps the table's country / group / indicator filters in
+sync with the Country Benchmarking tab, builds the filtered table, and serves
+every download button (running the rows through \code{\link[=dta_prep]{dta_prep()}} / \code{\link[=rds_prep]{rds_prep()}} /
+\code{\link[=csv_prep]{csv_prep()}} according to the chosen format and the descriptive-names
+toggle).
+}
+\details{
+\strong{Cross-module contract.} Reads \code{bench$country()}, \code{bench$groups()},
+\code{bench$countries()} and \code{bench$select_trigger()} from the
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}} list -- the first three drive live (ungated) picker
+sync, matching the original app. Exposes nothing back.
+}
+\seealso{
+\code{\link[=mod_data_ui]{mod_data_ui()}}, \code{\link[=dta_prep]{dta_prep()}}, \code{\link[=rds_prep]{rds_prep()}}, \code{\link[=csv_prep]{csv_prep()}},
+\code{\link[=mod_benchmark_server]{mod_benchmark_server()}}.
 }

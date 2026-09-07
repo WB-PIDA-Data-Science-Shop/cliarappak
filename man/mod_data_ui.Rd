@@ -2,18 +2,25 @@
 % Please edit documentation in R/mod_data.R
 \name{mod_data_ui}
 \alias{mod_data_ui}
-\title{data module UI}
+\title{Data module UI}
 \usage{
 mod_data_ui(id, app_data)
 }
 \arguments{
-\item{id}{a unique identifier for this module.}
+\item{id}{Character. The module id; must match \code{\link[=mod_data_server]{mod_data_server()}}.}
 
-\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}.}
+\item{app_data}{Shared data list from \code{\link[=build_app_data]{build_app_data()}}. Used to populate
+the table filters (\verb{$countries}, \verb{$variable_list}, ...).}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-Data tab: bulk CSV/rds/dta downloads plus an interactive, filterable table.
+The Data tab: a card of bulk download buttons (closeness-to-frontier and raw
+indicators, static and dynamic, cluster-level or all indicators, in CSV / RDS
+/ DTA) plus an interactive, filterable \code{\link[DT:datatable]{DT::datatable()}} with its own
+format picker and a "descriptive names vs codes" toggle.
+}
+\seealso{
+\code{\link[=mod_data_server]{mod_data_server()}}, \code{\link[=dta_prep]{dta_prep()}}, \code{\link[=rds_prep]{rds_prep()}}, \code{\link[=csv_prep]{csv_prep()}}.
 }

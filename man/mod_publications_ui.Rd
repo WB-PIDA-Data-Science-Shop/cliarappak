@@ -2,20 +2,25 @@
 % Please edit documentation in R/mod_publications.R
 \name{mod_publications_ui}
 \alias{mod_publications_ui}
-\title{publications module UI}
+\title{Publications module UI}
 \usage{
 mod_publications_ui(id, countries)
 }
 \arguments{
-\item{id}{a unique identifier for this module. To be used in the ui and server files}
+\item{id}{Character. The module id; must match \code{\link[=mod_publications_server]{mod_publications_server()}}.}
 
 \item{countries}{Character vector of country names for the country filter
-(replaces the implicit \code{countries} global used by the original
-\code{cliarapp} version).}
+(replaces the implicit \code{countries} global used by the original \code{cliarapp}
+version). In \code{app_ui()} this is \code{app_data$countries}.}
 }
 \value{
-a \code{tagList} of UI elements
+A \code{shiny::tagList} of UI elements.
 }
 \description{
-Contains code used to display content in the publications tab
+The Publications tab: the CSS for the \verb{.pubs*} card grid, a country filter,
+and the \code{uiOutput()} that \code{\link[=mod_publications_server]{mod_publications_server()}} fills with one
+\code{\link[=pub_function]{pub_function()}} card per publication.
+}
+\seealso{
+\code{\link[=mod_publications_server]{mod_publications_server()}}, \code{\link[=pub_function]{pub_function()}}.
 }

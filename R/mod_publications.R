@@ -1,13 +1,17 @@
-#' publications module UI
+#' Publications module UI
 #'
-#' Contains code used to display content in the publications tab
+#' The Publications tab: the CSS for the `.pubs*` card grid, a country filter,
+#' and the `uiOutput()` that [mod_publications_server()] fills with one
+#' [pub_function()] card per publication.
 #'
-#' @param id a unique identifier for this module. To be used in the ui and server files
+#' @param id Character. The module id; must match [mod_publications_server()].
 #' @param countries Character vector of country names for the country filter
-#'   (replaces the implicit `countries` global used by the original
-#'   `cliarapp` version).
+#'   (replaces the implicit `countries` global used by the original `cliarapp`
+#'   version). In `app_ui()` this is `app_data$countries`.
 #'
-#' @return a `tagList` of UI elements
+#' @return A `shiny::tagList` of UI elements.
+#'
+#' @seealso [mod_publications_server()], [pub_function()].
 #' @export
 mod_publications_ui <- function(id, countries) {
 
@@ -99,11 +103,21 @@ mod_publications_ui <- function(id, countries) {
   )
 }
 
-#' publications module server
+#' Publications module server
 #'
-#' @param id a unique identifier for this module. To be used in the ui and server files
+#' Reads the publication list from `inst/extdata/publicationsList.xlsx` and
+#' renders it into `output$publications`: one card per unique title, built
+#' dynamically (the number of titles and of publications per title is not known
+#' ahead of time) from [pub_function()]. Independent of `bench` / the shared
+#' selection state.
 #'
-#' @return NULL; called for its side effect of rendering the `publications` output.
+#' @param id Character. The module id; must match [mod_publications_ui()]. Note
+#'   `app_server()` mounts this on the id `"publications"`.
+#'
+#' @return `NULL`, invisibly. Called for its side effect of rendering the
+#'   `publications` output.
+#'
+#' @seealso [mod_publications_ui()], [pub_function()].
 #' @export
 mod_publications_server <- function(id) {
   moduleServer(

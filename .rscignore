@@ -8,6 +8,7 @@ MIGRATION_GUIDE.md
 .vscode
 README.Rmd
 .Renviron
+.Rprofile
 tests
 man
 .git

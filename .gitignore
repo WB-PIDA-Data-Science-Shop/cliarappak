@@ -5,6 +5,11 @@
 .DS_Store
 .quarto
 
+# Per-developer environment file -- holds deploy GUIDs and must never be in
+# version control (it's where API keys / PATs end up). Document required
+# variables in the README instead.
+.Renviron
+
 # rsconnect's own deployment manifests, and the entry file deploy_app()
 # regenerates on every call -- both are build artifacts, not source.
 rsconnect/

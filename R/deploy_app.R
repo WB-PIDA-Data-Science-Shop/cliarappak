@@ -52,6 +52,12 @@ write_deploy_entrypoint <- function(path, ...) {
 #' [run_app()] arguments baked in, then publishes it with
 #' [rsconnect::deployApp()].
 #'
+#' The generated entry file (`inst/app/cliarappak_app.R`) loads the package
+#' from the bundle source with [pkgload::load_all()] rather than
+#' `library(cliarappak)` -- Connect does not install the bundle's own
+#' package, so `library()` would fail there. `R/_disable_autoload.R` stops
+#' `shiny` from also auto-sourcing `R/`.
+#'
 #' @param type Character string specifying the deployment target. Must be
 #'   one of:
 #'   \describe{
@@ -66,8 +72,11 @@ write_deploy_entrypoint <- function(path, ...) {
 #'   every future restart of the deployed content, not just this deploy.
 #' @param onStart,options,enableBookmarking,uiPattern Forwarded to the
 #'   generated `run_app()` call. See `?shiny::shinyApp`.
-#' @param server Name of the Posit Connect server, as registered with
-#'   [rsconnect::addServer()].
+#' @param server Name of the Posit Connect server. Defaults to
+#'   `"datanalytics-int.worldbank.org"`. The server must be registered
+#'   locally (\code{rsconnect::servers()}) and you must have an account /
+#'   API key for it (\code{rsconnect::accounts()}); register one with
+#'   [rsconnect::connectApiUser()] if not.
 #' @param forceUpdate Passed to [rsconnect::deployApp()] -- skips the
 #'   interactive confirmation prompt on redeploys.
 #' @param ... Further named arguments to bake into the generated `run_app()`
@@ -84,8 +93,9 @@ write_deploy_entrypoint <- function(path, ...) {
 #'   \item \code{cliarappak_dev_guid}
 #'   \item \code{cliarappak_prod_guid}
 #' }
-#' These can be set in your \code{.Renviron} file or through
-#' \code{Sys.setenv()}.
+#' These can be set in your \code{.Renviron} file (which is git-ignored --
+#' never commit it) or through \code{Sys.setenv()}. The GUIDs are the
+#' "Content GUID" shown in each app's Info panel on Connect.
 #'
 #' @examples
 #' \dontrun{
@@ -109,7 +119,7 @@ deploy_app <- function(onStart = NULL,
                        uiPattern = "/",
                        dynamic_year_cutoff = NULL,
                        type = c("dev", "prod"),
-                       server = "internal-server",
+                       server = "datanalytics-int.worldbank.org",
                        forceUpdate = TRUE,
                        ...) {
   type <- match.arg(type)

@@ -11,7 +11,7 @@ deploy_app(
   uiPattern = "/",
   dynamic_year_cutoff = NULL,
   type = c("dev", "prod"),
-  server = "internal-server",
+  server = "datanalytics-int.worldbank.org",
   forceUpdate = TRUE,
   ...
 )
@@ -34,8 +34,11 @@ Uses the \code{cliarappak_dev_guid} environment variable.}
 Uses the \code{cliarappak_prod_guid} environment variable.}
 }}
 
-\item{server}{Name of the Posit Connect server, as registered with
-\code{\link[rsconnect:addServer]{rsconnect::addServer()}}.}
+\item{server}{Name of the Posit Connect server. Defaults to
+\code{"datanalytics-int.worldbank.org"}. The server must be registered
+locally (\code{rsconnect::servers()}) and you must have an account /
+API key for it (\code{rsconnect::accounts()}); register one with
+\code{\link[rsconnect:connectApiUser]{rsconnect::connectApiUser()}} if not.}
 
 \item{forceUpdate}{Passed to \code{\link[rsconnect:deployApp]{rsconnect::deployApp()}} -- skips the
 interactive confirmation prompt on redeploys.}
@@ -54,14 +57,21 @@ Regenerates the app's Posit Connect entry file with the current
 \code{\link[rsconnect:deployApp]{rsconnect::deployApp()}}.
 }
 \details{
+The generated entry file (\code{inst/app/cliarappak_app.R}) loads the package
+from the bundle source with \code{\link[pkgload:load_all]{pkgload::load_all()}} rather than
+\code{library(cliarappak)} -- Connect does not install the bundle's own
+package, so \code{library()} would fail there. \verb{R/_disable_autoload.R} stops
+\code{shiny} from also auto-sourcing \verb{R/}.
+
 This function requires an environment variable set with the Posit Connect
 application GUID for the chosen \code{type}:
 \itemize{
 \item \code{cliarappak_dev_guid}
 \item \code{cliarappak_prod_guid}
 }
-These can be set in your \code{.Renviron} file or through
-\code{Sys.setenv()}.
+These can be set in your \code{.Renviron} file (which is git-ignored --
+never commit it) or through \code{Sys.setenv()}. The GUIDs are the
+"Content GUID" shown in each app's Info panel on Connect.
 }
 \examples{
 \dontrun{

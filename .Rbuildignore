@@ -5,6 +5,8 @@
 ^dev$
 ^MIGRATION_GUIDE\.md$
 ^rsconnect$
+^\.rscignore$
+^inst/app/rsconnect$
 ^\.claude$
 ^\.vscode$
 ^README\.Rmd$

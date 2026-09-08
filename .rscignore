@@ -1,0 +1,13 @@
+renv
+renv.lock
+cliarappak.Rproj
+.Rproj.user
+dev
+MIGRATION_GUIDE.md
+.claude
+.vscode
+README.Rmd
+.Renviron
+tests
+man
+.git

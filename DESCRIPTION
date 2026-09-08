@@ -55,6 +55,7 @@ Imports:
     rsconnect,
     cliaretl
 Suggests:
+    pkgload,
     testthat (>= 3.0.0),
     flextable,
     knitr,
